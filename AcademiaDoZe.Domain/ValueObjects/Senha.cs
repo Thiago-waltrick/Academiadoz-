@@ -1,3 +1,4 @@
+// Thiago Augusto Ruskowski Waltrick
 using System;
 using System.Collections.Generic;
 using AcademiaDoZe.Domain.Common;
@@ -9,10 +10,7 @@ namespace AcademiaDoZe.Domain.ValueObjects
     {
         public string Valor { get; }
 
-        private Senha(string valor)
-        {
-            Valor = valor;
-        }
+        private Senha(string valor) => Valor = valor;
 
         public static Result<Senha> Criar(string? valor)
         {
@@ -20,10 +18,7 @@ namespace AcademiaDoZe.Domain.ValueObjects
             var v = valor ?? string.Empty;
             if (string.IsNullOrWhiteSpace(v) || v.Length < 6)
                 notifications.Add(new Notification(nameof(valor), "Senha inválida. Deve ter ao menos 6 caracteres."));
-
-            if (notifications.Count > 0)
-                return Result<Senha>.Failure(notifications);
-
+            if (notifications.Count > 0) return Result<Senha>.Failure(notifications);
             return Result<Senha>.Success(new Senha(v));
         }
     }

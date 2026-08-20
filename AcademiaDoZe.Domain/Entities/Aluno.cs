@@ -1,4 +1,5 @@
-// Autor: [Seu Nome Aqui]
+
+// Thiago Augusto Ruskowski Waltrick
 using System;
 using System.Collections.Generic;
 using AcademiaDoZe.Domain.Common;

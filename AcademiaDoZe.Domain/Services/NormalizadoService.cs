@@ -19,7 +19,6 @@ namespace AcademiaDoZe.Domain.Services
             try
             {
                 var trimmed = email.Trim();
-                // Simple regex for email
                 var regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
                 return regex.IsMatch(trimmed);
             }

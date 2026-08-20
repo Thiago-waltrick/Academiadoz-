@@ -1,3 +1,4 @@
+// Thiago Augusto Ruskowski Waltrick
 using System;
 using AcademiaDoZe.Domain.ValueObjects;
 
