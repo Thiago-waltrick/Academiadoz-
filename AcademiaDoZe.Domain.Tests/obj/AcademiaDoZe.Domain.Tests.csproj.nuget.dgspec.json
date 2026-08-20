@@ -1,0 +1,97 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\rusko\\source\\repos\\Thiago-waltrick\\Academiadoz-\\AcademiaDoZe.Domain.Tests\\AcademiaDoZe.Domain.Tests.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\rusko\\source\\repos\\Thiago-waltrick\\Academiadoz-\\AcademiaDoZe.Domain.Tests\\AcademiaDoZe.Domain.Tests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\rusko\\source\\repos\\Thiago-waltrick\\Academiadoz-\\AcademiaDoZe.Domain.Tests\\AcademiaDoZe.Domain.Tests.csproj",
+        "projectName": "AcademiaDoZe.Domain.Tests",
+        "projectPath": "C:\\Users\\rusko\\source\\repos\\Thiago-waltrick\\Academiadoz-\\AcademiaDoZe.Domain.Tests\\AcademiaDoZe.Domain.Tests.csproj",
+        "packagesPath": "C:\\Users\\rusko\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\rusko\\source\\repos\\Thiago-waltrick\\Academiadoz-\\AcademiaDoZe.Domain.Tests\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\rusko\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "framework": "net472",
+            "targetAlias": "net472",
+            "projectReferences": {
+              "C:\\Users\\rusko\\source\\repos\\Thiago-waltrick\\Academiadoz-\\AcademiaDoZe.Domain\\AcademiaDoZe.Domain.csproj": {
+                "projectPath": "C:\\Users\\rusko\\source\\repos\\Thiago-waltrick\\Academiadoz-\\AcademiaDoZe.Domain\\AcademiaDoZe.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.400"
+      },
+      "frameworks": {
+        "net472": {
+          "framework": "net472",
+          "targetAlias": "net472",
+          "dependencies": {
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[16.9.4, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.4.2, )"
+            },
+            "xunit.runner.visualstudio": {
+              "target": "Package",
+              "version": "[2.4.5, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\rusko\\source\\repos\\Thiago-waltrick\\Academiadoz-\\AcademiaDoZe.Domain\\AcademiaDoZe.Domain.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\rusko\\source\\repos\\Thiago-waltrick\\Academiadoz-\\AcademiaDoZe.Domain\\AcademiaDoZe.Domain.csproj",
+        "projectName": "AcademiaDoZe.Domain",
+        "projectPath": "C:\\Users\\rusko\\source\\repos\\Thiago-waltrick\\Academiadoz-\\AcademiaDoZe.Domain\\AcademiaDoZe.Domain.csproj",
+        "UsingMicrosoftNETSdk": false,
+        "frameworks": {
+          "net472": {
+            "framework": "net472",
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "framework": "net472"
+        }
+      }
+    }
+  }
+}
