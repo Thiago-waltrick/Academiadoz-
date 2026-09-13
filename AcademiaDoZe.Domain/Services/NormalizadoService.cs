@@ -11,7 +11,14 @@ namespace AcademiaDoZe.Domain.Services
 
         public static string ApenasDigitos(string? input) => input is null ? string.Empty : new string((input).Where(char.IsDigit).ToArray());
 
-        public static string ParaMaiusculo(string? input) => (input ?? string.Empty).ToUpperInvariant();
+        public static string ParaMaiusculo(string? input)
+        {
+            if (string.IsNullOrEmpty(input)) return string.Empty;
+            // Tratamento explícito para o caractere alemão 'ß' (eszett) que deve mapear para "SS"
+            // Substituímos por "ss" antes de aplicar ToUpperInvariant para garantir comportamento consistente
+            var temp = (input ?? string.Empty).Replace("ß", "ss");
+            return temp.ToUpperInvariant();
+        }
 
         public static bool EhEmailValido(string email)
         {
