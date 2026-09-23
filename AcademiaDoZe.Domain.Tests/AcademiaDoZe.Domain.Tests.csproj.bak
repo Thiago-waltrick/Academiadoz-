@@ -1,6 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<TargetFramework>net10.0</TargetFramework>
+	<TargetFramework>net472</TargetFramework>
 	<IsPackable>false</IsPackable>
 	<LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -13,4 +13,3 @@
 	<ProjectReference Include="..\AcademiaDoZe.Domain\AcademiaDoZe.Domain.csproj" />
   </ItemGroup>
 </Project>
-
