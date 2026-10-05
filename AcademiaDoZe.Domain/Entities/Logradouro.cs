@@ -9,14 +9,16 @@ namespace AcademiaDoZe.Domain.Entities
 {
     public class Logradouro
     {
+        public int Id { get; private set; }
         public string Nome { get; }
         public string Bairro { get; }
         public string Cidade { get; }
         public string Estado { get; }
         public Cep? Cep { get; }
 
-        private Logradouro(string nome, string bairro, string cidade, string estado, Cep? cep)
+        private Logradouro(int id, string nome, string bairro, string cidade, string estado, Cep? cep)
         {
+            Id = id;
             Nome = nome;
             Bairro = bairro;
             Cidade = cidade;
@@ -24,7 +26,7 @@ namespace AcademiaDoZe.Domain.Entities
             Cep = cep;
         }
 
-        public static Result<Logradouro> Criar(string? nome, string? bairro, string? cidade, string? estado, Cep? cep)
+        public static Result<Logradouro> Criar(string? nome, string? bairro, string? cidade, string? estado, Cep? cep, int id = 0)
         {
             var notifications = new List<Notification>();
             var nomeN = NormalizadoService.LimparEspacos(nome);
@@ -36,7 +38,7 @@ namespace AcademiaDoZe.Domain.Entities
 
             if (notifications.Count > 0) return Result<Logradouro>.Failure(notifications);
 
-            return Result<Logradouro>.Success(new Logradouro(nomeN, NormalizadoService.LimparEspacos(bairro), cidadeN, estadoN, cep));
+            return Result<Logradouro>.Success(new Logradouro(id, nomeN, NormalizadoService.LimparEspacos(bairro), cidadeN, estadoN, cep));
         }
     }
 }

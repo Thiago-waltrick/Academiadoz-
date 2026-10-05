@@ -29,16 +29,22 @@ namespace AcademiaDoZe.Application.Services
 
         public Task<IReadOnlyCollection<MatriculaDto>> ObterTodasAsync(CancellationToken cancellationToken = default)
         {
-            var list = _repo.GetAll();
-            var dtos = list.Select(m => m.ToDto()).ToList().AsReadOnly();
-            return Task.FromResult((IReadOnlyCollection<MatriculaDto>)dtos);
+            return Task.Run<IReadOnlyCollection<MatriculaDto>>(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var list = _repo.GetAll();
+                return (IReadOnlyCollection<MatriculaDto>)list.Select(m => m.ToDto()).ToList().AsReadOnly();
+            }, cancellationToken);
         }
 
         public Task<IReadOnlyCollection<MatriculaDto>> ObterPorAlunoIdAsync(int alunoId, CancellationToken cancellationToken = default)
         {
-            var list = _repo.GetByAlunoId(alunoId);
-            var dtos = list.Select(m => m.ToDto()).ToList().AsReadOnly();
-            return Task.FromResult((IReadOnlyCollection<MatriculaDto>)dtos);
+            return Task.Run<IReadOnlyCollection<MatriculaDto>>(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var list = _repo.GetByAlunoId(alunoId);
+                return (IReadOnlyCollection<MatriculaDto>)list.Select(m => m.ToDto()).ToList().AsReadOnly();
+            }, cancellationToken);
         }
 
         public Task CriarAsync(MatriculaDto dto, CancellationToken cancellationToken = default)

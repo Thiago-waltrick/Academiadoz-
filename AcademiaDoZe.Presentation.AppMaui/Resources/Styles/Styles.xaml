@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+  <LinearGradientBrush x:Key="PagePurpleGradient" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#FBF8FF" Offset="0.0" />
+    <GradientStop Color="#F2E9FF" Offset="0.55" />
+    <GradientStop Color="#E8D9FF" Offset="1.0" />
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="CardPurpleGradient" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#FFFFFF" Offset="0.0" />
+    <GradientStop Color="#F7F0FF" Offset="0.55" />
+    <GradientStop Color="#EEE2FF" Offset="1.0" />
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="InputPurpleGradient" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#FFFFFF" Offset="0.0" />
+    <GradientStop Color="#F6EEFF" Offset="1.0" />
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="ButtonPurpleGradient" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#E8D6FF" Offset="0.0" />
+    <GradientStop Color="#DCC4FF" Offset="0.55" />
+    <GradientStop Color="#CEAEFA" Offset="1.0" />
+  </LinearGradientBrush>
+
+  <Style TargetType="ContentPage">
+    <Setter Property="Background" Value="{StaticResource PagePurpleGradient}" />
+  </Style>
+  <Style TargetType="Frame">
+    <Setter Property="Background" Value="{StaticResource CardPurpleGradient}" />
+    <Setter Property="BorderColor" Value="#D9C5F5" />
+  </Style>
+
+  <Style TargetType="Label">
+    <Setter Property="TextColor" Value="#000000" />
+  </Style>
+  <Style TargetType="Entry">
+    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="PlaceholderColor" Value="#000000" />
+    <Setter Property="Background" Value="{StaticResource InputPurpleGradient}" />
+  </Style>
+  <Style TargetType="Editor">
+    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="PlaceholderColor" Value="#000000" />
+    <Setter Property="Background" Value="{StaticResource InputPurpleGradient}" />
+  </Style>
+  <Style TargetType="Picker">
+    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="Background" Value="{StaticResource InputPurpleGradient}" />
+  </Style>
+  <Style TargetType="SearchBar">
+    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="PlaceholderColor" Value="#000000" />
+    <Setter Property="Background" Value="{StaticResource InputPurpleGradient}" />
+  </Style>
+  <Style TargetType="Button">
+    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="Background" Value="{StaticResource ButtonPurpleGradient}" />
+  </Style>
+
+  <!-- Card border style -->
+  <Style x:Key="CardBorder" TargetType="Border">
+    <Setter Property="Background" Value="{StaticResource CardPurpleGradient}" />
+    <Setter Property="Stroke" Value="#D9C5F5" />
+    <Setter Property="Padding" Value="12" />
+    <Setter Property="Margin" Value="6" />
+    <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+  </Style>
+
+  <!-- Primary Button -->
+  <Style x:Key="ButtonPrimary" TargetType="Button">
+    <Setter Property="Background" Value="{StaticResource ButtonPurpleGradient}" />
+    <Setter Property="TextColor" Value="#000000" />
+    <!-- CornerRadius removed to avoid XAML parse issues on some SDK/tooling versions -->
+    <Setter Property="Padding" Value="10,8" />
+  </Style>
+
+  <!-- Secondary Button -->
+  <Style x:Key="ButtonSecondary" TargetType="Button">
+    <Setter Property="Background" Value="{StaticResource ButtonPurpleGradient}" />
+    <Setter Property="TextColor" Value="#000000" />
+    <!-- CornerRadius removed to avoid XAML parse issues on some SDK/tooling versions -->
+    <Setter Property="Padding" Value="10,8" />
+  </Style>
+
+  <!-- Small Button -->
+  <Style x:Key="ButtonSmall" TargetType="Button">
+    <Setter Property="Background" Value="{StaticResource ButtonPurpleGradient}" />
+    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="FontSize" Value="12" />
+    <!-- CornerRadius removed to avoid XAML parse issues on some SDK/tooling versions -->
+    <Setter Property="Padding" Value="8,6" />
+  </Style>
+
+  <!-- Danger Button -->
+  <Style x:Key="ButtonDanger" TargetType="Button">
+    <Setter Property="Background" Value="{StaticResource ButtonPurpleGradient}" />
+    <Setter Property="TextColor" Value="#000000" />
+    <!-- CornerRadius removed to avoid XAML parse issues on some SDK/tooling versions -->
+    <Setter Property="Padding" Value="10,8" />
+  </Style>
+
+</ResourceDictionary>

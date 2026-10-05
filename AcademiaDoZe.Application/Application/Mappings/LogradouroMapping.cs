@@ -1,5 +1,6 @@
 // Thiago Augusto Ruskowski Waltrick
 using System;
+
 using AcademiaDoZe.Domain.Entities;
 using AcademiaDoZe.Application.DTOs;
 
@@ -9,9 +10,11 @@ namespace AcademiaDoZe.Application.Mappings
     {
         public static LogradouroDto ToDto(this Logradouro src)
         {
-            if (src == null) return null!;
+            if (src == null)
+                return null!;
             return new LogradouroDto
             {
+                Id = src.Id,
                 Nome = src.Nome,
                 Bairro = src.Bairro,
                 Cidade = src.Cidade,
@@ -23,8 +26,15 @@ namespace AcademiaDoZe.Application.Mappings
         public static Logradouro ToEntity(this LogradouroDto src)
         {
             if (src == null) return null!;
-            // Domain Logradouro uses factory; cannot set private ctor — return null or throw
-            throw new InvalidOperationException("Converting LogradouroDto to Logradouro entity should use domain factories and validations.");
+            var cep = string.IsNullOrWhiteSpace(src.Cep) ? null : Domain.ValueObjects.Cep.Criar(src.Cep);
+            if (cep is { IsFailure: true })
+                throw new ArgumentException(string.Join("; ", cep.Notifications), nameof(src));
+
+            var result = Logradouro.Criar(src.Nome, src.Bairro, src.Cidade, src.Estado, cep?.Value, src.Id);
+            if (result.IsFailure)
+                throw new ArgumentException(string.Join("; ", result.Notifications), nameof(src));
+
+            return result.Value!;
         }
     }
 }

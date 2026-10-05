@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       x:Class="AcademiaDoZe.Presentation.AppMaui.AppShell"
+       Shell.ForegroundColor="#000000"
+       Shell.TitleColor="#000000"
+       Background="{StaticResource PagePurpleGradient}"
+       Shell.BackgroundColor="#F2E9FF"
+       Shell.FlyoutBackgroundColor="#F7F0FF">
+
+  <FlyoutItem Title="Dashboard" Icon="icon_dashboard.png">
+    <ShellContent x:Name="DashboardShellContent" Title="Dashboard" Route="dashboard" />
+  </FlyoutItem>
+
+  <FlyoutItem Title="Logradouros" Icon="icon_map.png">
+    <ShellContent x:Name="LogradourosShellContent" Title="Logradouros" Route="logradouros" />
+  </FlyoutItem>
+
+  <FlyoutItem Title="Treino ativo">
+    <ShellContent x:Name="TreinoShellContent" Title="Treino ativo" Route="treino" />
+  </FlyoutItem>
+
+  <FlyoutItem Title="Matrículas">
+    <ShellContent x:Name="MatriculasShellContent" Title="Matrículas" Route="matriculas" />
+  </FlyoutItem>
+
+</Shell>

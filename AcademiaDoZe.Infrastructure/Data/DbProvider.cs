@@ -32,26 +32,21 @@ namespace AcademiaDoZe.Infrastructure.Data
             ProviderInvariantName = providerInvariantName ?? throw new ArgumentNullException(nameof(providerInvariantName));
             ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
 
-            // Suporte apenas para SQL Server neste projeto
-            if (providerInvariantName.IndexOf("SqlClient", StringComparison.OrdinalIgnoreCase) >= 0 || providerInvariantName.IndexOf("SqlServer", StringComparison.OrdinalIgnoreCase) >= 0)
+            if (providerInvariantName.Contains("SqlClient", StringComparison.OrdinalIgnoreCase) || providerInvariantName.Contains("SqlServer", StringComparison.OrdinalIgnoreCase))
             {
                 _factory = Microsoft.Data.SqlClient.SqlClientFactory.Instance;
+                DatabaseType = DatabaseType.SqlServer;
             }
             else
             {
-                throw new InvalidOperationException($"Provedor não suportado neste projeto: '{providerInvariantName}'. Apenas SQL Server é permitido.");
+                throw new InvalidOperationException($"Provedor não suportado neste projeto: '{providerInvariantName}'. Apenas Microsoft SQL Server é permitido.");
             }
 
             if (databaseType.HasValue)
-                DatabaseType = databaseType.Value;
-            else if (providerInvariantName.IndexOf("SqlClient", StringComparison.OrdinalIgnoreCase) >= 0 || providerInvariantName.IndexOf("SqlServer", StringComparison.OrdinalIgnoreCase) >= 0)
-                DatabaseType = DatabaseType.SqlServer;
-            else if (providerInvariantName.IndexOf("MySql", StringComparison.OrdinalIgnoreCase) >= 0)
-                DatabaseType = DatabaseType.MySql;
-            else if (providerInvariantName.IndexOf("Sqlite", StringComparison.OrdinalIgnoreCase) >= 0)
-                DatabaseType = DatabaseType.Sqlite;
-            else
-                DatabaseType = DatabaseType.Unknown;
+            {
+                if (databaseType.Value != DatabaseType)
+                    throw new ArgumentException("O tipo de banco não corresponde ao provider informado.", nameof(databaseType));
+            }
         }
 
         public DbConnection CreateConnection()

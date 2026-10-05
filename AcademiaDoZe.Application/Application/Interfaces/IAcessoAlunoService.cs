@@ -1,18 +1,16 @@
 // Thiago Augusto Ruskowski Waltrick
+// Thiago Augusto Ruskowski Waltrick
 using System.Collections.Generic;
-using AcademiaDoZe.Domain.Entities;
+using System.Threading;
+using System.Threading.Tasks;
+using AcademiaDoZe.Application.DTOs;
 
 namespace AcademiaDoZe.Application.Interfaces
 {
     public interface IAcessoAlunoService
     {
-        // Retorna registros de acesso para um aluno. Não existe DTO de acesso na camada Application;
-        // utilizamos diretamente a entidade de domínio AcessoAluno conforme artefatos existentes.
-        IReadOnlyCollection<AcessoAluno> ObterPorAlunoId(int alunoId);
-
-        // Registra acesso para alunoId e retorna a entidade criada.
-        AcessoAluno RegistrarAcesso(int alunoId);
-
-        void Remover(int id);
+        Task<AcessoAlunoDto> RegistrarEntradaAsync(int alunoId, CancellationToken cancellationToken = default);
+        Task<AcessoAlunoDto> RegistrarSaidaAsync(int acessoId, CancellationToken cancellationToken = default);
+        Task<IReadOnlyCollection<AcessoAlunoDto>> ObterPorAlunoIdAsync(int alunoId, CancellationToken cancellationToken = default);
     }
 }

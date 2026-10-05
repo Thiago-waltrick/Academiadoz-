@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:AcademiaDoZe.Presentation.AppMaui.Views"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.MatriculaPage"
+             Title="Matrícula">
+
+  <ScrollView>
+    <VerticalStackLayout Padding="12" Spacing="12">
+
+      <!-- Card 1: Aluno -->
+      <Frame BorderColor="#E0E0E0" Padding="12" HasShadow="False">
+        <VerticalStackLayout>
+          <Label Text="Aluno" FontAttributes="Bold" />
+          <HorizontalStackLayout Spacing="8">
+            <SearchBar Placeholder="Buscar por CPF" x:Name="CpfSearch" />
+            <Button Text="Pesquisar" x:Name="BtnSearchCpf" />
+          </HorizontalStackLayout>
+
+          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
+            <Image Source="placeholder.png" WidthRequest="64" HeightRequest="64" />
+            <VerticalStackLayout Grid.Column="1">
+              <Label Text="Nome do Aluno" FontAttributes="Bold" />
+              <Label Text="CPF: 000.000.000-00" />
+              <Label Text="Nascimento: 01/01/2000" />
+            </VerticalStackLayout>
+          </Grid>
+        </VerticalStackLayout>
+      </Frame>
+
+      <!-- Card 2: Plano e Vigência -->
+      <Frame BorderColor="#E0E0E0" Padding="12" HasShadow="False">
+        <VerticalStackLayout>
+          <Label Text="Plano e Vigência" FontAttributes="Bold" />
+          <Picker x:Name="PlanoPicker">
+            <Picker.Items>
+              <x:String>Mensal</x:String>
+              <x:String>Trimestral</x:String>
+              <x:String>Semestral</x:String>
+              <x:String>Anual</x:String>
+            </Picker.Items>
+          </Picker>
+          <DatePicker x:Name="DataInicio" />
+          <Label x:Name="DataTerminoLabel" Text="Término: --/--/----" />
+        </VerticalStackLayout>
+      </Frame>
+
+      <!-- Card 3: Saúde e Restrições -->
+      <Frame BorderColor="#E0E0E0" Padding="12" HasShadow="False">
+        <VerticalStackLayout>
+          <Label Text="Saúde e Restrições" FontAttributes="Bold" />
+          <CollectionView x:Name="RestricoesCollection" ItemsLayout="VerticalList">
+            <CollectionView.ItemTemplate>
+              <DataTemplate>
+                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                  <CheckBox />
+                  <Label Text="{Binding}" />
+                </HorizontalStackLayout>
+              </DataTemplate>
+            </CollectionView.ItemTemplate>
+          </CollectionView>
+
+          <Label Text="Observações" />
+          <Editor x:Name="ObservacoesEditor" HeightRequest="100" />
+        </VerticalStackLayout>
+      </Frame>
+
+      <!-- Card 4: Laudo Médico -->
+      <Frame BorderColor="#E0E0E0" Padding="12" HasShadow="False">
+        <VerticalStackLayout>
+          <Label Text="Laudo Médico" FontAttributes="Bold" />
+          <Label x:Name="LaudoStatusLabel" Text="Obrigatório" />
+          <HorizontalStackLayout Spacing="8">
+            <Button Text="Anexar" x:Name="BtnAnexar" />
+            <Button Text="Remover" x:Name="BtnRemover" />
+          </HorizontalStackLayout>
+        </VerticalStackLayout>
+      </Frame>
+
+      <!-- Card 5: Ações -->
+      <Frame BorderColor="#E0E0E0" Padding="12" HasShadow="False">
+        <HorizontalStackLayout HorizontalOptions="End" Spacing="12">
+          <Button Text="Cancelar" x:Name="BtnCancelar" StyleClass="ButtonSecondary" />
+          <Button Text="Guardar" x:Name="BtnGuardar" StyleClass="ButtonPrimary" />
+        </HorizontalStackLayout>
+      </Frame>
+
+    </VerticalStackLayout>
+  </ScrollView>
+
+</ContentPage>

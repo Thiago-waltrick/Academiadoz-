@@ -39,14 +39,28 @@ namespace AcademiaDoZe.Infrastructure.Tests
         }
 
         [Fact]
-        public void GetAll_When_Empty_Returns_Empty()
+        public void GetAll_Returns_Inserted_Row()
         {
             var provider = CreateProvider();
             var repo = new LogradouroRepository(provider);
-            provider.ExecuteNonQuery("DELETE FROM dbo.tb_logradouro");
-            var all = repo.GetAll();
-            all.Should().NotBeNull();
-            all.Count.Should().Be(0);
+            var token = Guid.NewGuid().ToString("N");
+            var item = Logradouro.Criar($"Teste {token}", "Bairro", $"SQLServer-{token}", "SP", null).Value;
+            var id = 0;
+
+            try
+            {
+                repo.Add(item);
+                id = Convert.ToInt32(provider.ExecuteScalar(
+                    "SELECT TOP (1) Id FROM dbo.tb_logradouro WHERE nome = @nome AND cidade = @cidade ORDER BY Id DESC",
+                    new[] { provider.CreateParameter("@nome", item.Nome), provider.CreateParameter("@cidade", item.Cidade) }));
+
+                repo.GetAll().Should().Contain(logradouro => logradouro.Id == id);
+            }
+            finally
+            {
+                if (id > 0)
+                    repo.Remove(Logradouro.Criar(item.Nome, item.Bairro, item.Cidade, item.Estado, item.Cep, id).Value);
+            }
         }
 
         [Fact]
@@ -54,7 +68,6 @@ namespace AcademiaDoZe.Infrastructure.Tests
         {
             var provider = CreateProvider();
             var repo = new LogradouroRepository(provider);
-            provider.ExecuteNonQuery("DELETE FROM dbo.tb_logradouro");
             var found = repo.BuscarPorCep(null!);
             found.Should().NotBeNull();
             found.Count.Should().Be(0);
@@ -65,22 +78,40 @@ namespace AcademiaDoZe.Infrastructure.Tests
         {
             var provider = CreateProvider();
             var repo = new LogradouroRepository(provider);
-            provider.ExecuteNonQuery("DELETE FROM dbo.tb_logradouro");
+            var token = Guid.NewGuid().ToString("N");
+            var cidade = $"SQLServer-{token}";
 
             var cepRes1 = AcademiaDoZe.Domain.ValueObjects.Cep.Criar("11111111");
             var cep1 = cepRes1.IsSuccess ? cepRes1.Value : null;
-            var a = Logradouro.Criar("Thiago Augusto Ruskowski Waltrick", "Waltrick", "SQLServer", "SP", cep1).Value;
+            var a = Logradouro.Criar($"Teste A {token}", "Waltrick", cidade, "SP", cep1).Value;
             var cepRes2 = AcademiaDoZe.Domain.ValueObjects.Cep.Criar("22222222");
             var cep2 = cepRes2.IsSuccess ? cepRes2.Value : null;
-            var b = Logradouro.Criar("Thiago Augusto Ruskowski Waltrick", "Waltrick", "SQLServer", "SP", cep2).Value;
+            var b = Logradouro.Criar($"Teste B {token}", "Waltrick", cidade, "SP", cep2).Value;
 
-            repo.Add(a);
-            repo.Add(b);
+            var ids = new System.Collections.Generic.List<int>();
 
-            var all = repo.GetAll();
-            all.Should().NotBeNull();
-            all.Count.Should().BeGreaterOrEqualTo(2);
-            all.All(l => l.Nome == "Thiago Augusto Ruskowski Waltrick" && l.Bairro == "Waltrick" && l.Cidade == "SQLServer").Should().BeTrue();
+            try
+            {
+                repo.Add(a);
+                repo.Add(b);
+                ids = provider.ExecuteReader(
+                    "SELECT Id FROM dbo.tb_logradouro WHERE cidade = @cidade AND nome IN (@nomeA, @nomeB)",
+                    r => r.GetInt32(0),
+                    new System.Data.Common.DbParameter[]
+                    {
+                        provider.CreateParameter("@cidade", cidade),
+                        provider.CreateParameter("@nomeA", a.Nome),
+                        provider.CreateParameter("@nomeB", b.Nome)
+                    });
+
+                ids.Should().HaveCount(2);
+                repo.GetAll().Where(logradouro => ids.Contains(logradouro.Id)).Should().HaveCount(2);
+            }
+            finally
+            {
+                foreach (var id in ids)
+                    repo.Remove(Logradouro.Criar("Registro de teste", "Waltrick", cidade, "SP", null, id).Value);
+            }
         }
     }
 }

@@ -1,0 +1,14 @@
+using Microsoft.Maui.Controls;
+using AcademiaDoZe.Presentation.AppMaui.ViewModels;
+
+namespace AcademiaDoZe.Presentation.AppMaui.Views
+{
+    public partial class ConfigPage : ContentPage
+    {
+        public ConfigPage(ConfigViewModel viewModel)
+        {
+            InitializeComponent();
+            BindingContext = viewModel;
+        }
+    }
+}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.LogradouroListPage"
+             x:Name="ThisPage"
+             Title="Logradouros">
+
+  <ContentPage.Resources>
+    <ResourceDictionary Source="../Resources/Styles/Styles.xaml" />
+  </ContentPage.Resources>
+
+  <Grid RowDefinitions="Auto,Auto,*">
+
+    <!-- Search bar -->
+    <HorizontalStackLayout Grid.Row="0" Padding="12" Spacing="8">
+      <Picker WidthRequest="140" ItemsSource="{Binding FilterTypes}" SelectedItem="{Binding SelectedFilterType}" />
+      <Entry Placeholder="Buscar" Text="{Binding SearchText}" HorizontalOptions="FillAndExpand" ReturnCommand="{Binding SearchLogradourosCommand}" />
+      <Button Text="Buscar" Command="{Binding SearchLogradourosCommand}" Style="{StaticResource ButtonPrimary}" />
+    </HorizontalStackLayout>
+
+    <!-- Collection with Refresh -->
+    <RefreshView Grid.Row="2" IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+      <CollectionView ItemsSource="{Binding Logradouros}" SelectionMode="None">
+        <CollectionView.ItemTemplate>
+          <DataTemplate>
+            <Border Style="{StaticResource CardBorder}" Margin="8">
+              <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                  <Label Text="{Binding Cep, StringFormat='CEP: {0}'}" />
+                  <Label Text="{Binding Nome, StringFormat='Rua: {0}'}" FontAttributes="Bold" />
+                  <Label Text="{Binding Bairro, StringFormat='Bairro: {0}'}" />
+                  <Label Text="{Binding Cidade, StringFormat='Cidade: {0}'}" />
+                  <Label Text="{Binding Estado, StringFormat='Estado (UF): {0}'}" />
+                </VerticalStackLayout>
+
+                <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="8" HorizontalOptions="End">
+                  <Button Text="Editar" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditLogradouroCommand}" CommandParameter="{Binding .}" />
+                  <Button Text="Excluir" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteLogradouroCommand}" CommandParameter="{Binding .}" Style="{StaticResource ButtonDanger}" />
+                </HorizontalStackLayout>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+      </CollectionView>
+    </RefreshView>
+
+    <!-- Floating Action Button -->
+    <Button Grid.Row="2" Text="+" Command="{Binding AddLogradouroCommand}" Style="{StaticResource ButtonPrimary}" HorizontalOptions="End" VerticalOptions="End" Margin="16" WidthRequest="56" HeightRequest="56" />
+
+  </Grid>
+
+</ContentPage>

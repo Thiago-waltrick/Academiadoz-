@@ -147,3 +147,55 @@ BEGIN
     CREATE INDEX idx_acesso_aluno ON dbo.tb_acesso(aluno_id);
 END
 GO
+
+-- 6) Execução de treinos
+IF OBJECT_ID('dbo.tb_treino_sessao', 'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.tb_treino_sessao (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        iniciada_em DATETIME2 NOT NULL,
+        concluida_em DATETIME2 NULL
+    );
+END
+GO
+
+IF NOT EXISTS(SELECT 1 FROM sys.indexes WHERE name = 'ux_treino_sessao_ativa' AND object_id = OBJECT_ID('dbo.tb_treino_sessao'))
+BEGIN
+    CREATE UNIQUE INDEX ux_treino_sessao_ativa ON dbo.tb_treino_sessao(concluida_em) WHERE concluida_em IS NULL;
+END
+GO
+
+IF OBJECT_ID('dbo.tb_treino_exercicio', 'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.tb_treino_exercicio (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        sessao_id INT NOT NULL,
+        nome NVARCHAR(200) NOT NULL,
+        CONSTRAINT fk_treino_exercicio_sessao FOREIGN KEY (sessao_id) REFERENCES dbo.tb_treino_sessao(Id)
+    );
+END
+GO
+
+IF NOT EXISTS(SELECT 1 FROM sys.indexes WHERE name = 'idx_treino_exercicio_sessao' AND object_id = OBJECT_ID('dbo.tb_treino_exercicio'))
+BEGIN
+    CREATE INDEX idx_treino_exercicio_sessao ON dbo.tb_treino_exercicio(sessao_id);
+END
+GO
+
+IF OBJECT_ID('dbo.tb_treino_serie', 'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.tb_treino_serie (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        exercicio_id INT NOT NULL,
+        numero INT NOT NULL,
+        carga_kg DECIMAL(8,2) NOT NULL,
+        repeticoes INT NOT NULL,
+        concluida BIT NOT NULL CONSTRAINT df_treino_serie_concluida DEFAULT(0),
+        CONSTRAINT fk_treino_serie_exercicio FOREIGN KEY (exercicio_id) REFERENCES dbo.tb_treino_exercicio(Id),
+        CONSTRAINT uq_treino_serie_numero UNIQUE (exercicio_id, numero),
+        CONSTRAINT ck_treino_serie_numero CHECK (numero > 0),
+        CONSTRAINT ck_treino_serie_carga CHECK (carga_kg >= 0),
+        CONSTRAINT ck_treino_serie_repeticoes CHECK (repeticoes > 0)
+    );
+END
+GO

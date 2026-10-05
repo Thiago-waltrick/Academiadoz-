@@ -20,7 +20,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
 
-            var sql = "INSERT INTO dbo.tb_logradouro (nome, bairro, cidade, estado, cep) VALUES (@nome, @bairro, @cidade, @estado, @cep);";
+            var sql = $"INSERT INTO {TableName} (nome, bairro, cidade, estado, cep) VALUES (@nome, @bairro, @cidade, @estado, @cep);";
             var p1 = _provider.CreateParameter("@nome", entity.Nome);
             var p2 = _provider.CreateParameter("@bairro", entity.Bairro ?? (object)DBNull.Value);
             var p3 = _provider.CreateParameter("@cidade", entity.Cidade ?? (object)DBNull.Value);
@@ -33,14 +33,14 @@ namespace AcademiaDoZe.Infrastructure.Repositories
 
         public IReadOnlyCollection<Logradouro> GetAll()
         {
-            var sql = "SELECT Id, nome, bairro, cidade, estado, cep FROM dbo.tb_logradouro";
+            var sql = $"SELECT Id, nome, bairro, cidade, estado, cep FROM {TableName}";
             var list = Query(sql, Map);
             return list.AsReadOnly();
         }
 
         public Logradouro GetById(int id)
         {
-            var sql = "SELECT Id, nome, bairro, cidade, estado, cep FROM dbo.tb_logradouro WHERE Id = @id";
+            var sql = $"SELECT Id, nome, bairro, cidade, estado, cep FROM {TableName} WHERE Id = @id";
             var p = _provider.CreateParameter("@id", id);
             var list = Query(sql, Map, p);
             if (list == null || list.Count == 0) throw new InfrastructureException("Logradouro não encontrado");
@@ -50,33 +50,32 @@ namespace AcademiaDoZe.Infrastructure.Repositories
         public void Remove(Logradouro entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-            // Remove by matching unique fields: nome + cidade
-            var sql = "DELETE FROM dbo.tb_logradouro WHERE nome = @nome AND cidade = @cidade";
-            var p1 = _provider.CreateParameter("@nome", entity.Nome);
-            var p2 = _provider.CreateParameter("@cidade", entity.Cidade ?? (object)DBNull.Value);
-            ExecuteNonQuery(sql, p1, p2);
+            var sql = $"DELETE FROM {TableName} WHERE Id = @id";
+            ExecuteNonQuery(sql, _provider.CreateParameter("@id", entity.Id));
         }
 
         public void Update(Logradouro entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-            // Update by matching nome + cidade (best-effort since domain Logradouro has no Id)
-            var sql = "UPDATE dbo.tb_logradouro SET bairro = @bairro, estado = @estado, cep = @cep WHERE nome = @nome AND cidade = @cidade";
-            var p1 = _provider.CreateParameter("@bairro", entity.Bairro ?? (object)DBNull.Value);
-            var p2 = _provider.CreateParameter("@estado", entity.Estado ?? (object)DBNull.Value);
-            var p3 = _provider.CreateParameter("@cep", entity.Cep?.Codigo ?? (object)DBNull.Value);
-            var p4 = _provider.CreateParameter("@nome", entity.Nome);
-            var p5 = _provider.CreateParameter("@cidade", entity.Cidade ?? (object)DBNull.Value);
-            ExecuteNonQuery(sql, p1, p2, p3, p4, p5);
+            var sql = $"UPDATE {TableName} SET nome = @nome, bairro = @bairro, cidade = @cidade, estado = @estado, cep = @cep WHERE Id = @id";
+            var p1 = _provider.CreateParameter("@nome", entity.Nome);
+            var p2 = _provider.CreateParameter("@bairro", entity.Bairro);
+            var p3 = _provider.CreateParameter("@cidade", entity.Cidade);
+            var p4 = _provider.CreateParameter("@estado", entity.Estado);
+            var p5 = _provider.CreateParameter("@cep", entity.Cep?.Codigo);
+            var p6 = _provider.CreateParameter("@id", entity.Id);
+            ExecuteNonQuery(sql, p1, p2, p3, p4, p5, p6);
         }
 
         public IReadOnlyCollection<Logradouro> BuscarPorCep(string cep)
         {
-            var sql = "SELECT Id, nome, bairro, cidade, estado, cep FROM dbo.tb_logradouro WHERE cep = @cep";
+            var sql = $"SELECT Id, nome, bairro, cidade, estado, cep FROM {TableName} WHERE cep = @cep";
             var p = _provider.CreateParameter("@cep", cep ?? (object)DBNull.Value);
             var list = Query(sql, Map, p);
             return list.AsReadOnly();
         }
+
+        private const string TableName = "dbo.tb_logradouro";
 
         private Logradouro Map(DbDataReader r)
         {
@@ -87,7 +86,8 @@ namespace AcademiaDoZe.Infrastructure.Repositories
             var cep = r.IsDBNull(5) ? null : r.GetString(5);
 
             var cepVo = cep == null ? null : Domain.ValueObjects.Cep.Criar(cep).Value;
-            var result = Logradouro.Criar(nome, bairro, cidade, estado, cepVo);
+            var id = r.IsDBNull(0) ? 0 : r.GetInt32(0);
+            var result = Logradouro.Criar(nome, bairro, cidade, estado, cepVo, id);
             if (result.IsFailure) throw new InfrastructureException("Falha ao mapear Logradouro: " + string.Join(',', result.Notifications));
             return result.Value!;
         }

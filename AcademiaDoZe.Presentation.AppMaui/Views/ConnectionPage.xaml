@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.ConnectionPage"
+             Title="Conectar ao banco">
+  <ScrollView>
+    <Grid Padding="24" MinimumHeightRequest="600">
+      <Border Padding="24"
+              Background="{StaticResource CardPurpleGradient}"
+              Stroke="#D9C5F5"
+              StrokeShape="RoundRectangle 16"
+              VerticalOptions="Center"
+              HorizontalOptions="Center"
+              MaximumWidthRequest="480">
+        <VerticalStackLayout Spacing="14">
+          <Label Text="Conectar ao SQL Server"
+                 FontSize="26"
+                 FontAttributes="Bold"
+                  TextColor="#000000" />
+          <Label Text="Informe as credenciais SQL para validar a conexão antes de abrir o sistema."
+                  TextColor="#000000" />
+
+          <Label Text="Servidor" TextColor="#000000" />
+          <Entry Text="{Binding Server}"
+                 Placeholder="localhost"
+                 TextColor="#000000"
+                 PlaceholderColor="#000000"
+                 Background="{StaticResource InputPurpleGradient}" />
+
+          <Label Text="Banco de dados" TextColor="#000000" />
+          <Entry Text="{Binding Database}"
+                 Placeholder="db_academia_do_ze"
+                 TextColor="#000000"
+                 PlaceholderColor="#000000"
+                 Background="{StaticResource InputPurpleGradient}" />
+
+          <Label Text="Usuário SQL" TextColor="#000000" />
+          <Entry Text="{Binding Username}"
+                 Placeholder="sa"
+                 TextColor="#000000"
+                 PlaceholderColor="#000000"
+                 Background="{StaticResource InputPurpleGradient}" />
+
+          <Label Text="Senha" TextColor="#000000" />
+          <Entry Text="{Binding Password}"
+                 IsPassword="True"
+                 TextColor="#000000"
+                 PlaceholderColor="#000000"
+                 Background="{StaticResource InputPurpleGradient}" />
+
+          <Button Text="Testar conexão e entrar"
+                  Command="{Binding ConnectCommand}"
+                  Background="{StaticResource ButtonPurpleGradient}"
+                  TextColor="#000000"
+                  Padding="14,12" />
+
+          <ActivityIndicator IsRunning="{Binding IsConnecting}"
+                             IsVisible="{Binding IsConnecting}"
+                             Color="#B89AE8" />
+          <Label Text="{Binding StatusMessage}"
+                 TextColor="#000000"
+                 LineBreakMode="WordWrap" />
+        </VerticalStackLayout>
+      </Border>
+    </Grid>
+  </ScrollView>
+</ContentPage>

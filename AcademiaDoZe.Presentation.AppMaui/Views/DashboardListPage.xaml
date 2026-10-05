@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.DashboardListPage"
+             x:Name="ThisPage"
+             Title="Dashboard">
+
+  <ContentPage.Resources>
+    <ResourceDictionary Source="../Resources/Styles/Styles.xaml" />
+  </ContentPage.Resources>
+
+  <ScrollView>
+    <VerticalStackLayout Padding="16">
+
+      <!-- Header -->
+      <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
+        <Image Source="academiadoze.png" WidthRequest="64" HeightRequest="64" />
+        <VerticalStackLayout>
+          <Label Text="AcademiaDoZe" FontAttributes="Bold" FontSize="20" />
+          <Label Text="Painel de controle" FontSize="14" TextColor="#000000" />
+        </VerticalStackLayout>
+      </HorizontalStackLayout>
+
+      <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HeightRequest="40" />
+      <Label Text="{Binding LoadErrorMessage}" TextColor="#000000" LineBreakMode="WordWrap" />
+
+      <!-- Grid of cards -->
+      <Grid ColumnSpacing="12" RowSpacing="12" Margin="0,12,0,0">
+
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource CardBorder}">
+          <Border.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding NavigateToLogradourosCommand}" />
+          </Border.GestureRecognizers>
+          <VerticalStackLayout>
+            <Label Text="Logradouros" FontAttributes="Bold" />
+            <Label Text="{Binding TotalLogradouros}" FontSize="24" />
+          </VerticalStackLayout>
+        </Border>
+        <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource CardBorder}">
+          <Border.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding NavigateToMatriculasCommand}" />
+          </Border.GestureRecognizers>
+          <VerticalStackLayout>
+            <Label Text="Matrículas" FontAttributes="Bold" />
+            <Label Text="{Binding TotalMatriculas}" FontSize="24" />
+          </VerticalStackLayout>
+        </Border>
+
+      </Grid>
+
+    </VerticalStackLayout>
+  </ScrollView>
+
+</ContentPage>

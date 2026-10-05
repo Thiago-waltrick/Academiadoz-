@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.LogradouroPage"
+             Title="Logradouro">
+
+  <ContentPage.Resources>
+    <ResourceDictionary Source="../Resources/Styles/Styles.xaml" />
+  </ContentPage.Resources>
+
+  <ScrollView>
+    <VerticalStackLayout Padding="16" Spacing="12">
+
+      <!-- CEP row with search -->
+      <HorizontalStackLayout Spacing="8">
+        <Entry Placeholder="CEP" Text="{Binding Logradouro.Cep}" Keyboard="Numeric" HorizontalOptions="FillAndExpand" />
+        <Button Text="Buscar" Command="{Binding SearchByCepCommand}" Style="{StaticResource ButtonSecondary}" />
+      </HorizontalStackLayout>
+
+      <Entry Placeholder="Rua" Text="{Binding Logradouro.Nome}" />
+      <Entry Placeholder="Bairro" Text="{Binding Logradouro.Bairro}" />
+      <Entry Placeholder="Cidade" Text="{Binding Logradouro.Cidade}" />
+      <Entry Placeholder="Estado (UF)" Text="{Binding Logradouro.Estado}" MaxLength="2" />
+
+      <HorizontalStackLayout Spacing="12" HorizontalOptions="End">
+        <Button Text="Cancelar" Command="{Binding CancelCommand}" Style="{StaticResource ButtonSecondary}" />
+        <Button Text="Salvar" Command="{Binding SaveLogradouroCommand}" Style="{StaticResource ButtonPrimary}" />
+      </HorizontalStackLayout>
+
+    </VerticalStackLayout>
+  </ScrollView>
+
+</ContentPage>

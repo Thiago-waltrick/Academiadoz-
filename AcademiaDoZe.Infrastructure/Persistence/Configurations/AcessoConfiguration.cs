@@ -9,14 +9,15 @@ namespace AcademiaDoZe.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<AcessoAluno> builder)
         {
-            // Conforme requisito mapeamos a entidade de acesso para a tabela tb_acesso
-            builder.ToTable("tb_acesso");
+            // Mapeamento atualizado para tb_acesso_aluno com campos de entrada/saida
+            builder.ToTable("tb_acesso_aluno");
             builder.HasKey(a => a.Id);
 
             builder.Property(a => a.AlunoId).HasColumnName("aluno_id");
-            builder.Property(a => a.DataAcesso).HasColumnName("data_acesso");
+            builder.Property(a => a.Entrada).HasColumnName("entrada");
+            builder.Property(a => a.Saida).HasColumnName("saida");
 
-            // FK para aluno (Matricula/Aluno)
+            // FK para aluno
             builder.HasOne<Aluno>().WithMany().HasForeignKey("AlunoId").HasConstraintName("fk_acesso_aluno");
 
             builder.HasIndex(a => a.AlunoId).HasDatabaseName("idx_acesso_aluno");

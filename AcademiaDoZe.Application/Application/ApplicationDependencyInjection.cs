@@ -16,6 +16,7 @@ namespace AcademiaDoZe.Application
             services.AddScoped<ILogradouroService, LogradouroService>();
             services.AddScoped<IAcessoAlunoService, AcessoAlunoService>();
             services.AddScoped<IAcessoColaboradorService, AcessoColaboradorService>();
+            services.AddScoped<ITreinoService, TreinoService>();
 
             return services;
         }

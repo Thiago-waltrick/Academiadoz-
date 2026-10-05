@@ -15,12 +15,25 @@ namespace AcademiaDoZe.Infrastructure.Tests
         public void Deve_Limpar_Tabela_Logradouro()
         {
             var provider = CreateProvider();
-            // limpar tabela para estado conhecido
-            provider.ExecuteNonQuery("DELETE FROM dbo.tb_logradouro");
+            var repo = new LogradouroRepository(provider);
+            var token = Guid.NewGuid().ToString("N");
+            var item = Logradouro.Criar($"Teste {token}", "Bairro", $"SQLServer-{token}", "SP", null).Value;
+            var id = 0;
 
-            var obj = provider.ExecuteScalar("SELECT COUNT(1) FROM dbo.tb_logradouro");
-            var count = obj == null || obj == DBNull.Value ? 0 : Convert.ToInt32(obj);
-            count.Should().Be(0);
+            try
+            {
+                repo.Add(item);
+                id = Convert.ToInt32(provider.ExecuteScalar(
+                    "SELECT TOP (1) Id FROM dbo.tb_logradouro WHERE nome = @nome AND cidade = @cidade ORDER BY Id DESC",
+                    new[] { provider.CreateParameter("@nome", item.Nome), provider.CreateParameter("@cidade", item.Cidade) }));
+
+                repo.GetAll().Any(logradouro => logradouro.Id == id).Should().BeTrue();
+            }
+            finally
+            {
+                if (id > 0)
+                    repo.Remove(Logradouro.Criar(item.Nome, item.Bairro, item.Cidade, item.Estado, item.Cep, id).Value);
+            }
         }
 
         [Fact]
@@ -28,10 +41,8 @@ namespace AcademiaDoZe.Infrastructure.Tests
         {
             var provider = CreateProvider();
             var repo = new LogradouroRepository(provider);
-            // garantir tabela limpa
-            provider.ExecuteNonQuery("DELETE FROM dbo.tb_logradouro");
 
-            Action act = () => repo.GetById(999999);
+            Action act = () => repo.GetById(-1);
             act.Should().Throw<AcademiaDoZe.Infrastructure.Exceptions.InfrastructureException>();
         }
 
@@ -41,33 +52,36 @@ namespace AcademiaDoZe.Infrastructure.Tests
             var provider = CreateProvider();
             var repo = new LogradouroRepository(provider);
 
-            // limpar antes
-            provider.ExecuteNonQuery("DELETE FROM dbo.tb_logradouro");
-
+            var token = Guid.NewGuid().ToString("N");
+            var nome = $"Teste {token}";
+            var cidade = $"SQLServer-{token}";
             var cepRes = AcademiaDoZe.Domain.ValueObjects.Cep.Criar("12345678");
             var cep = cepRes.IsSuccess ? cepRes.Value : null;
 
-            var log = Logradouro.Criar("Thiago Augusto Ruskowski Waltrick", "Waltrick", "SQLServer", "SP", cep).Value;
+            var log = Logradouro.Criar(nome, "Waltrick", cidade, "SP", cep).Value;
             repo.Add(log);
+            var ids = provider.ExecuteReader(
+                "SELECT TOP (1) Id FROM dbo.tb_logradouro WHERE nome = @nome AND cidade = @cidade ORDER BY Id DESC",
+                r => r.GetInt32(0),
+                new System.Data.Common.DbParameter[] { provider.CreateParameter("@nome", nome), provider.CreateParameter("@cidade", cidade) });
+            ids.Should().ContainSingle();
+            var id = ids[0];
 
-            var all = repo.GetAll();
-            all.Any(l => l.Nome == "Thiago Augusto Ruskowski Waltrick" && l.Cidade == "SQLServer").Should().BeTrue();
+            try
+            {
+                var updated = Logradouro.Criar(nome, "WaltrickUpdated", cidade, "SP", cep, id).Value;
+                repo.Update(updated);
 
-            // atualizar bairro
-            var updated = Logradouro.Criar("Thiago Augusto Ruskowski Waltrick", "WaltrickUpdated", "SQLServer", "SP", cep).Value;
-            repo.Update(updated);
+                repo.GetById(id).Bairro.Should().Be("WaltrickUpdated");
 
-            var byIdList = provider.ExecuteReader("SELECT TOP 1 bairro FROM dbo.tb_logradouro WHERE nome = @nome AND cidade = @cidade ORDER BY Id DESC",
-                r => r.IsDBNull(0) ? string.Empty : r.GetString(0), new System.Data.Common.DbParameter[] { provider.CreateParameter("@nome", updated.Nome), provider.CreateParameter("@cidade", updated.Cidade) });
-
-            byIdList.Should().NotBeNull();
-            byIdList.Count.Should().BeGreaterThan(0);
-            byIdList[0].Should().Be("WaltrickUpdated");
-
-            // remover
-            repo.Remove(updated);
-            var remaining = repo.GetAll();
-            remaining.Any(l => l.Nome == "Thiago Augusto Ruskowski Waltrick" && l.Cidade == "SQLServer").Should().BeFalse();
+                repo.Remove(updated);
+                Action getRemoved = () => repo.GetById(id);
+                getRemoved.Should().Throw<AcademiaDoZe.Infrastructure.Exceptions.InfrastructureException>();
+            }
+            finally
+            {
+                repo.Remove(Logradouro.Criar(nome, "Waltrick", cidade, "SP", cep, id).Value);
+            }
         }
 
         [Fact]
@@ -75,20 +89,39 @@ namespace AcademiaDoZe.Infrastructure.Tests
         {
             var provider = CreateProvider();
             var repo = new LogradouroRepository(provider);
-            provider.ExecuteNonQuery("DELETE FROM dbo.tb_logradouro");
-
+            var token = Guid.NewGuid().ToString("N");
+            var cidade = $"SQLServer-{token}";
             var cepRes = AcademiaDoZe.Domain.ValueObjects.Cep.Criar("99999999");
             var cep = cepRes.IsSuccess ? cepRes.Value : null;
 
-            var a = Logradouro.Criar("Thiago Augusto Ruskowski Waltrick", "Waltrick", "SQLite", "SP", cep).Value;
-            var b = Logradouro.Criar("Thiago Augusto Ruskowski Waltrick", "Waltrick2", "SQLite", "SP", cep).Value;
-            repo.Add(a);
-            repo.Add(b);
+            var a = Logradouro.Criar($"Teste A {token}", "Bairro A", cidade, "SP", cep).Value;
+            var b = Logradouro.Criar($"Teste B {token}", "Bairro B", cidade, "SP", cep).Value;
+            var ids = new System.Collections.Generic.List<int>();
 
-            var found = repo.BuscarPorCep("99999999");
-            found.Should().NotBeNull();
-            found.Count.Should().BeGreaterOrEqualTo(2);
-            found.All(l => l.Cidade == "SQLite").Should().BeTrue();
+            try
+            {
+                repo.Add(a);
+                repo.Add(b);
+                ids = provider.ExecuteReader(
+                    "SELECT Id FROM dbo.tb_logradouro WHERE cidade = @cidade AND nome IN (@nomeA, @nomeB)",
+                    r => r.GetInt32(0),
+                    new System.Data.Common.DbParameter[]
+                    {
+                        provider.CreateParameter("@cidade", cidade),
+                        provider.CreateParameter("@nomeA", a.Nome),
+                        provider.CreateParameter("@nomeB", b.Nome)
+                    });
+
+                ids.Should().HaveCount(2);
+                var found = repo.BuscarPorCep("99999999");
+                found.Where(logradouro => ids.Contains(logradouro.Id)).Should().HaveCount(2);
+                found.Where(logradouro => ids.Contains(logradouro.Id)).All(logradouro => logradouro.Cidade == cidade).Should().BeTrue();
+            }
+            finally
+            {
+                foreach (var id in ids)
+                    repo.Remove(Logradouro.Criar("Registro de teste", "Bairro", cidade, "SP", cep, id).Value);
+            }
         }
     }
 }

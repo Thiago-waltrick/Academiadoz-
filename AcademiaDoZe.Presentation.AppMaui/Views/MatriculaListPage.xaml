@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.MatriculaListPage"
+             Title="Matrículas">
+  <ContentPage.Resources>
+    <ResourceDictionary Source="../Resources/Styles/Styles.xaml" />
+  </ContentPage.Resources>
+
+  <Grid Padding="16" RowDefinitions="Auto,Auto,*" RowSpacing="8">
+    <Label Grid.Row="0"
+           Text="{Binding LoadErrorMessage}"
+           TextColor="#000000"
+           LineBreakMode="WordWrap" />
+    <ActivityIndicator Grid.Row="1"
+                       IsRunning="{Binding IsBusy}"
+                       IsVisible="{Binding IsBusy}" />
+    <RefreshView Grid.Row="2"
+                 IsRefreshing="{Binding IsRefreshing}"
+                 Command="{Binding LoadMatriculasCommand}">
+      <CollectionView ItemsSource="{Binding Matriculas}"
+                      SelectionMode="None">
+        <CollectionView.EmptyView>
+          <Label Text="Nenhuma matrícula encontrada."
+                 HorizontalOptions="Center"
+                 VerticalOptions="Center" />
+        </CollectionView.EmptyView>
+        <CollectionView.ItemTemplate>
+          <DataTemplate>
+            <Border Style="{StaticResource CardBorder}">
+              <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout>
+                  <Label Text="{Binding Id, StringFormat='Matrícula #{0}'}"
+                         FontAttributes="Bold" />
+                  <Label Text="{Binding Aluno.Nome}" />
+                  <Label Text="{Binding Plano}" />
+                  <Label Text="{Binding DataInicio, StringFormat='Início: {0:dd/MM/yyyy}'}" />
+                </VerticalStackLayout>
+                <Label Grid.Column="1"
+                       Text="{Binding DataFim, StringFormat='Término: {0:dd/MM/yyyy}'}"
+                       HorizontalOptions="End" />
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+      </CollectionView>
+    </RefreshView>
+  </Grid>
+</ContentPage>

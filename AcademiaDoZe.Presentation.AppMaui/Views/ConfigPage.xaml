@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.ConfigPage"
+             Title="Configurações">
+
+  <ContentPage.Resources>
+    <ResourceDictionary Source="../Resources/Styles/Styles.xaml" />
+  </ContentPage.Resources>
+
+  <ScrollView>
+    <VerticalStackLayout Padding="16" Spacing="12">
+
+      <!-- Logo que muda conforme tema -->
+      <Image WidthRequest="120" HeightRequest="120">
+        <Image.Source>
+          <AppThemeBinding Light="logo_claro.png" Dark="logo_escuro.png" />
+        </Image.Source>
+      </Image>
+
+      <!-- Tema -->
+      <Label Text="Tema" />
+      <Picker SelectedItem="{Binding SelectedTheme}">
+        <Picker.Items>
+          <x:String>System</x:String>
+          <x:String>Light</x:String>
+          <x:String>Dark</x:String>
+        </Picker.Items>
+      </Picker>
+
+      <!-- Banco de dados -->
+      <Label Text="Tipo de Banco" />
+      <Label Text="SQL Server" />
+
+      <Label Text="Servidor" />
+      <Entry Text="{Binding Servidor}" Placeholder="host:port" />
+
+      <Label Text="Banco de Dados" />
+      <Entry Text="{Binding BancoDados}" />
+
+      <Label Text="Usuário" />
+      <Entry Text="{Binding Usuario}" />
+
+      <Button Command="{Binding SalvarConfiguracoesAsyncCommand}" Style="{StaticResource ButtonPrimary}">
+        <Button.ImageSource>
+          <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe161;" />
+        </Button.ImageSource>
+        <Button.Text>Salvar</Button.Text>
+      </Button>
+
+    </VerticalStackLayout>
+  </ScrollView>
+
+</ContentPage>

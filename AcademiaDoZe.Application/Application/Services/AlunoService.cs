@@ -23,9 +23,12 @@ namespace AcademiaDoZe.Application.Services
 
         public Task<IReadOnlyCollection<AlunoDto>> ObterTodosAsync(CancellationToken cancellationToken = default)
         {
-            var list = _repo.GetAll();
-            var dtos = list.Select(a => a.ToDto()).ToList().AsReadOnly();
-            return Task.FromResult((IReadOnlyCollection<AlunoDto>)dtos);
+            return Task.Run<IReadOnlyCollection<AlunoDto>>(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var list = _repo.GetAll();
+                return (IReadOnlyCollection<AlunoDto>)list.Select(a => a.ToDto()).ToList().AsReadOnly();
+            }, cancellationToken);
         }
 
         public Task<AlunoDto> ObterPorIdAsync(int id, CancellationToken cancellationToken = default)
