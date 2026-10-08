@@ -17,12 +17,12 @@
         <Image Source="academiadoze.png" WidthRequest="64" HeightRequest="64" />
         <VerticalStackLayout>
           <Label Text="AcademiaDoZe" FontAttributes="Bold" FontSize="20" />
-          <Label Text="Painel de controle" FontSize="14" TextColor="#000000" />
+          <Label Text="Painel de controle" FontSize="14" />
         </VerticalStackLayout>
       </HorizontalStackLayout>
 
       <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HeightRequest="40" />
-      <Label Text="{Binding LoadErrorMessage}" TextColor="#000000" LineBreakMode="WordWrap" />
+      <Label Text="{Binding LoadErrorMessage}" LineBreakMode="WordWrap" />
 
       <!-- Grid of cards -->
       <Grid ColumnSpacing="12" RowSpacing="12" Margin="0,12,0,0">
@@ -42,7 +42,7 @@
             <TapGestureRecognizer Command="{Binding NavigateToLogradourosCommand}" />
           </Border.GestureRecognizers>
           <VerticalStackLayout>
-            <Label Text="Logradouros" FontAttributes="Bold" />
+            <Label Text="📍 Logradouros" FontAttributes="Bold" />
             <Label Text="{Binding TotalLogradouros}" FontSize="24" />
           </VerticalStackLayout>
         </Border>
@@ -51,7 +51,7 @@
             <TapGestureRecognizer Command="{Binding NavigateToMatriculasCommand}" />
           </Border.GestureRecognizers>
           <VerticalStackLayout>
-            <Label Text="Matrículas" FontAttributes="Bold" />
+            <Label Text="🎓 Matrículas" FontAttributes="Bold" />
             <Label Text="{Binding TotalMatriculas}" FontSize="24" />
           </VerticalStackLayout>
         </Border>

@@ -20,7 +20,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
 
-            var sql = "INSERT INTO dbo.tb_aluno (nome, data_nascimento, cpf, email, telefone, end_numero, end_complemento, logradouro_nome, logradouro_bairro, logradouro_cidade, logradouro_estado, logradouro_cep) VALUES (@nome, @data_nascimento, @cpf, @email, @telefone, @end_numero, @end_complemento, @logradouro_nome, @logradouro_bairro, @logradouro_cidade, @logradouro_estado, @logradouro_cep);";
+            var sql = "INSERT INTO dbo.tb_aluno (nome, data_nascimento, cpf, email, telefone, end_numero, end_complemento, logradouro_nome, logradouro_bairro, logradouro_cidade, logradouro_estado, logradouro_cep, foto_conteudo) VALUES (@nome, @data_nascimento, @cpf, @email, @telefone, @end_numero, @end_complemento, @logradouro_nome, @logradouro_bairro, @logradouro_cidade, @logradouro_estado, @logradouro_cep, @foto_conteudo);";
 
             var p1 = _provider.CreateParameter("@nome", entity.Nome);
             var p2 = _provider.CreateParameter("@data_nascimento", entity.DataNascimento == default ? (object)DBNull.Value : entity.DataNascimento);
@@ -39,20 +39,21 @@ namespace AcademiaDoZe.Infrastructure.Repositories
             var p10 = _provider.CreateParameter("@logradouro_cidade", log?.Cidade ?? (object)DBNull.Value);
             var p11 = _provider.CreateParameter("@logradouro_estado", log?.Estado ?? (object)DBNull.Value);
             var p12 = _provider.CreateParameter("@logradouro_cep", log?.Cep?.Codigo ?? (object)DBNull.Value);
+            var p13 = _provider.CreateParameter("@foto_conteudo", entity.FotoConteudo ?? (object)DBNull.Value);
 
-            ExecuteNonQuery(sql, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+            ExecuteNonQuery(sql, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);
         }
 
         public IReadOnlyCollection<Aluno> GetAll()
         {
-            var sql = "SELECT Id, nome, data_nascimento, cpf, email, telefone, end_numero, end_complemento, logradouro_nome, logradouro_bairro, logradouro_cidade, logradouro_estado, logradouro_cep FROM dbo.tb_aluno";
+            var sql = "SELECT Id, nome, data_nascimento, cpf, email, telefone, end_numero, end_complemento, logradouro_nome, logradouro_bairro, logradouro_cidade, logradouro_estado, logradouro_cep, foto_conteudo FROM dbo.tb_aluno";
             var list = Query(sql, Map);
             return list.AsReadOnly();
         }
 
         public Aluno GetById(int id)
         {
-            var sql = "SELECT Id, nome, data_nascimento, cpf, email, telefone, end_numero, end_complemento, logradouro_nome, logradouro_bairro, logradouro_cidade, logradouro_estado, logradouro_cep FROM dbo.tb_aluno WHERE Id = @id";
+            var sql = "SELECT Id, nome, data_nascimento, cpf, email, telefone, end_numero, end_complemento, logradouro_nome, logradouro_bairro, logradouro_cidade, logradouro_estado, logradouro_cep, foto_conteudo FROM dbo.tb_aluno WHERE Id = @id";
             var p = _provider.CreateParameter("@id", id);
             var list = Query(sql, Map, p);
             if (list == null || list.Count == 0) throw new InfrastructureException("Aluno não encontrado");
@@ -61,7 +62,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
 
         public Aluno GetByCpf(string cpf)
         {
-            var sql = "SELECT Id, nome, data_nascimento, cpf, email, telefone, end_numero, end_complemento, logradouro_nome, logradouro_bairro, logradouro_cidade, logradouro_estado, logradouro_cep FROM dbo.tb_aluno WHERE cpf = @cpf";
+            var sql = "SELECT Id, nome, data_nascimento, cpf, email, telefone, end_numero, end_complemento, logradouro_nome, logradouro_bairro, logradouro_cidade, logradouro_estado, logradouro_cep, foto_conteudo FROM dbo.tb_aluno WHERE cpf = @cpf";
             var p = _provider.CreateParameter("@cpf", cpf ?? (object)DBNull.Value);
             var list = Query(sql, Map, p);
             if (list == null || list.Count == 0) throw new InfrastructureException("Aluno não encontrado");
@@ -79,7 +80,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
         public void Update(Aluno entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-            var sql = "UPDATE dbo.tb_aluno SET data_nascimento = @data_nascimento, cpf = @cpf, email = @email, telefone = @telefone, end_numero = @end_numero, end_complemento = @end_complemento, logradouro_nome = @logradouro_nome, logradouro_bairro = @logradouro_bairro, logradouro_cidade = @logradouro_cidade, logradouro_estado = @logradouro_estado, logradouro_cep = @logradouro_cep WHERE Id = @id";
+            var sql = "UPDATE dbo.tb_aluno SET data_nascimento = @data_nascimento, cpf = @cpf, email = @email, telefone = @telefone, end_numero = @end_numero, end_complemento = @end_complemento, logradouro_nome = @logradouro_nome, logradouro_bairro = @logradouro_bairro, logradouro_cidade = @logradouro_cidade, logradouro_estado = @logradouro_estado, logradouro_cep = @logradouro_cep, foto_conteudo = @foto_conteudo WHERE Id = @id";
 
             var p1 = _provider.CreateParameter("@data_nascimento", entity.DataNascimento == default ? (object)DBNull.Value : entity.DataNascimento);
             var p2 = _provider.CreateParameter("@cpf", entity.Cpf?.Valor ?? (object)DBNull.Value);
@@ -98,8 +99,9 @@ namespace AcademiaDoZe.Infrastructure.Repositories
             var p10 = _provider.CreateParameter("@logradouro_estado", log?.Estado ?? (object)DBNull.Value);
             var p11 = _provider.CreateParameter("@logradouro_cep", log?.Cep?.Codigo ?? (object)DBNull.Value);
             var p12 = _provider.CreateParameter("@id", entity.Id);
+            var p13 = _provider.CreateParameter("@foto_conteudo", entity.FotoConteudo ?? (object)DBNull.Value);
 
-            ExecuteNonQuery(sql, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+            ExecuteNonQuery(sql, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);
         }
 
         private Aluno Map(DbDataReader r)
@@ -117,6 +119,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
             var log_cidade = r.IsDBNull(10) ? null : r.GetString(10);
             var log_estado = r.IsDBNull(11) ? null : r.GetString(11);
             var log_cep = r.IsDBNull(12) ? null : r.GetString(12);
+            var fotoConteudo = r.IsDBNull(13) ? null : (byte[])r.GetValue(13);
 
             var cpfVo = cpf == null ? null : Domain.ValueObjects.Cpf.Criar(cpf).Value;
             var emailVo = email == null ? null : Domain.ValueObjects.Email.Criar(email).Value;
@@ -126,7 +129,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
             var logradouro = log_nome == null ? null : Logradouro.Criar(log_nome, log_bairro, log_cidade, log_estado, cepVo).Value;
             var endereco = Domain.ValueObjects.Endereco.Criar(logradouro, end_num, end_comp).Value;
 
-            var res = Aluno.Criar(id, nome, cpfVo!, emailVo!, data_nasc, telVo!, endereco);
+            var res = Aluno.Criar(id, nome, cpfVo!, emailVo!, data_nasc, telVo!, endereco, fotoConteudo);
             if (res.IsFailure) throw new InfrastructureException("Falha ao mapear Aluno: " + string.Join(',', res.Notifications));
             return res.Value!;
         }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 using System.Windows.Input;
 using AcademiaDoZe.Application.DTOs;
+using AcademiaDoZe.Presentation.AppMaui.Services;
 using AcademiaDoZe.Presentation.AppMaui.ViewModels;
 
 namespace AcademiaDoZe.Presentation.AppMaui.Views
@@ -16,6 +17,7 @@ namespace AcademiaDoZe.Presentation.AppMaui.Views
             InitializeComponent();
             _viewModel = viewModel;
             BindingContext = viewModel;
+            ThemeToggleOverlay.Attach(this, bottomMargin: 88);
         }
 
         protected override async void OnAppearing()

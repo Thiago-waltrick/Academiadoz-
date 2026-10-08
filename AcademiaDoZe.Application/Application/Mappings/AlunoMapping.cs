@@ -18,7 +18,8 @@ namespace AcademiaDoZe.Application.Mappings
                 Email = src.Email.ToString(),
                 DataNascimento = src.DataNascimento,
                 Telefone = src.Telefone?.Numero ?? string.Empty,
-                Endereco = src.Endereco?.Logradouro?.ToDto() ?? new Application.DTOs.LogradouroDto()
+                Endereco = src.Endereco?.Logradouro?.ToDto() ?? new Application.DTOs.LogradouroDto(),
+                FotoConteudo = src.FotoConteudo
             };
             return dto;
         }

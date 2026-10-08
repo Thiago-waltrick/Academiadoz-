@@ -1,4 +1,4 @@
-using Microsoft.Maui;
+﻿using Microsoft.Maui;
 using Microsoft.Maui.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -26,24 +26,42 @@ namespace AcademiaDoZe.Presentation.AppMaui
             builder.Services.AddTransient<ConnectionViewModel>();
             builder.Services.AddTransient<DashboardListViewModel>();
             builder.Services.AddTransient<MatriculaListViewModel>();
+            builder.Services.AddTransient<MatriculaViewModel>();
             builder.Services.AddTransient<LogradouroListViewModel>();
             builder.Services.AddTransient<LogradouroViewModel>();
             builder.Services.AddTransient<ConfigViewModel>();
             builder.Services.AddTransient<TreinoExecucaoViewModel>();
+            builder.Services.AddTransient<ProfileViewModel>();
 
             // Register Views
             builder.Services.AddTransient<ConnectionPage>();
             builder.Services.AddTransient<AppShell>();
             builder.Services.AddTransient<DashboardListPage>();
             builder.Services.AddTransient<MatriculaListPage>();
+            builder.Services.AddTransient<MatriculaPage>();
             builder.Services.AddTransient<LogradouroListPage>();
             builder.Services.AddTransient<LogradouroPage>();
             builder.Services.AddTransient<ConfigPage>();
             builder.Services.AddTransient<TreinoExecucaoPage>();
+            builder.Services.AddTransient<ProfilePage>();
 
             Routing.RegisterRoute("logradouro", typeof(LogradouroPage));
+            Routing.RegisterRoute("matricula", typeof(MatriculaPage));
 
             return builder.Build();
         }
+#if IOS || MACCATALYST
+    [Foundation.Register("AppDelegate")]
+    public class AppDelegate : Microsoft.Maui.MauiUIApplicationDelegate
+    {
+        protected override Microsoft.Maui.Hosting.MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
     }
+
+    public static class Program
+    {
+        public static void Main(string[] args) =>
+            UIKit.UIApplication.Main(args, null, typeof(AppDelegate));
+    }
+#endif
+}
 }

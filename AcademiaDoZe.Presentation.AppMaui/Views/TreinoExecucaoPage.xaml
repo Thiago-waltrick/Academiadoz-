@@ -16,48 +16,41 @@
       <VerticalStackLayout Padding="20" Spacing="18">
         <VerticalStackLayout Spacing="4">
           <Label Text="TREINO EM EXECUÇÃO"
-                  TextColor="#000000"
                  FontSize="12"
                  FontAttributes="Bold"
                  CharacterSpacing="1.5" />
           <Label Text="Seu ritmo. Sua evolução."
-                  TextColor="#000000"
                  FontSize="28"
                  FontAttributes="Bold" />
           <Label Text="Registre cada série para acompanhar sua sessão."
-                  TextColor="#000000"
                  FontSize="14" />
         </VerticalStackLayout>
 
         <Border IsVisible="{Binding TemFeedback}"
-                Background="{StaticResource CardPurpleGradient}"
-                Stroke="#D9C5F5"
+                Background="{AppThemeBinding Light={StaticResource CardPurpleGradient}, Dark={StaticResource CardDarkGradient}}"
+                Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
                 StrokeThickness="1"
                 Padding="14"
                 StrokeShape="RoundRectangle 14">
           <Label Text="{Binding Feedback}"
-                  TextColor="#000000"
                  FontSize="14" />
         </Border>
 
         <Border IsVisible="{Binding TreinoInativo}"
-                Background="{StaticResource CardPurpleGradient}"
-                Stroke="#D9C5F5"
+                Background="{AppThemeBinding Light={StaticResource CardPurpleGradient}, Dark={StaticResource CardDarkGradient}}"
+                Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
                 StrokeThickness="1"
                 Padding="20"
                 StrokeShape="RoundRectangle 22">
           <VerticalStackLayout Spacing="12">
             <Label Text="Pronto para começar?"
-                    TextColor="#000000"
                    FontSize="20"
                    FontAttributes="Bold" />
             <Label Text="Abra uma sessão e adicione os exercícios que fará hoje."
-                    TextColor="#000000"
                    FontSize="14" />
             <Button Text="Iniciar treino"
                     Command="{Binding IniciarTreinoCommand}"
-                     Background="{StaticResource ButtonPurpleGradient}"
-                     TextColor="#000000"
+                    Background="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}"
                     FontAttributes="Bold"
                     CornerRadius="14"
                     HeightRequest="52" />
@@ -65,28 +58,25 @@
         </Border>
 
         <VerticalStackLayout IsVisible="{Binding TreinoAtivo}" Spacing="16">
-          <Border Background="{StaticResource CardPurpleGradient}"
-                  Stroke="#D9C5F5"
+          <Border Background="{AppThemeBinding Light={StaticResource CardPurpleGradient}, Dark={StaticResource CardDarkGradient}}"
+                  Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
                   StrokeThickness="1"
                   Padding="16"
                   StrokeShape="RoundRectangle 18">
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
               <VerticalStackLayout Spacing="4">
                 <Label Text="SESSÃO ATIVA"
-                        TextColor="#000000"
                        FontSize="11"
                        FontAttributes="Bold"
                        CharacterSpacing="1" />
                 <Label Text="{Binding InicioTreinoTexto}"
-                        TextColor="#000000"
                        FontSize="17"
                        FontAttributes="Bold" />
               </VerticalStackLayout>
               <Button Grid.Column="1"
                       Text="Finalizar"
                       Command="{Binding FinalizarTreinoCommand}"
-                       Background="{StaticResource ButtonPurpleGradient}"
-                       TextColor="#000000"
+                      Background="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}"
                       FontAttributes="Bold"
                       CornerRadius="12"
                       Padding="16,10"
@@ -94,28 +84,24 @@
             </Grid>
           </Border>
 
-          <Border Background="{StaticResource CardPurpleGradient}"
-                  Stroke="#D9C5F5"
+          <Border Background="{AppThemeBinding Light={StaticResource CardPurpleGradient}, Dark={StaticResource CardDarkGradient}}"
+                  Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
                   StrokeThickness="1"
                   Padding="16"
                   StrokeShape="RoundRectangle 18">
             <VerticalStackLayout Spacing="12">
               <Label Text="Adicionar exercício"
-                      TextColor="#000000"
                      FontSize="18"
                      FontAttributes="Bold" />
               <Entry Text="{Binding NomeExercicio}"
                      Placeholder="Ex.: Supino reto"
-                      PlaceholderColor="#000000"
-                      TextColor="#000000"
-                      Background="{StaticResource InputPurpleGradient}"
+                     Background="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}"
                      ClearButtonVisibility="WhileEditing"
                      ReturnType="Done"
                      ReturnCommand="{Binding AdicionarExercicioCommand}" />
               <Button Text="Adicionar à sessão"
                       Command="{Binding AdicionarExercicioCommand}"
-                       Background="{StaticResource ButtonPurpleGradient}"
-                       TextColor="#000000"
+                      Background="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}"
                       FontAttributes="Bold"
                       CornerRadius="12"
                       HeightRequest="48" />
@@ -125,8 +111,8 @@
           <VerticalStackLayout BindableLayout.ItemsSource="{Binding Exercicios}" Spacing="14">
             <BindableLayout.ItemTemplate>
               <DataTemplate x:DataType="viewModels:TreinoExercicioViewModel">
-                <Border Background="{StaticResource CardPurpleGradient}"
-                        Stroke="#D9C5F5"
+                <Border Background="{AppThemeBinding Light={StaticResource CardPurpleGradient}, Dark={StaticResource CardDarkGradient}}"
+                        Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
                         StrokeThickness="1"
                         Padding="16"
                         StrokeShape="RoundRectangle 18">
@@ -134,16 +120,13 @@
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                       <VerticalStackLayout Spacing="3">
                         <Label Text="{Binding Nome}"
-                                TextColor="#000000"
                                FontSize="18"
                                FontAttributes="Bold" />
                         <Label Text="{Binding ResumoSeries}"
-                                TextColor="#000000"
                                FontSize="12" />
                       </VerticalStackLayout>
                       <Label Grid.Column="1"
                              Text="EXERCÍCIO"
-                              TextColor="#000000"
                              FontSize="10"
                              FontAttributes="Bold"
                              VerticalOptions="Start" />
@@ -152,31 +135,24 @@
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                       <VerticalStackLayout Spacing="5">
                         <Label Text="Carga (kg)"
-                                TextColor="#000000"
                                FontSize="12" />
                         <Entry Text="{Binding NovaCargaKg}"
                                Placeholder="0"
-                                PlaceholderColor="#000000"
-                                TextColor="#000000"
-                                Background="{StaticResource InputPurpleGradient}"
+                               Background="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}"
                                Keyboard="Numeric" />
                       </VerticalStackLayout>
                       <VerticalStackLayout Grid.Column="1" Spacing="5">
                         <Label Text="Repetições"
-                                TextColor="#000000"
                                FontSize="12" />
                         <Entry Text="{Binding NovasRepeticoes}"
                                Placeholder="10"
-                                PlaceholderColor="#000000"
-                                TextColor="#000000"
-                                Background="{StaticResource InputPurpleGradient}"
+                               Background="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}"
                                Keyboard="Numeric" />
                       </VerticalStackLayout>
                     </Grid>
                     <Button Text="＋  Registrar série"
                             Command="{Binding AdicionarSerieCommand}"
-                            Background="{StaticResource ButtonPurpleGradient}"
-                            TextColor="#000000"
+                            Background="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}"
                             FontAttributes="Bold"
                             CornerRadius="12"
                             HeightRequest="46" />
@@ -184,20 +160,18 @@
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding Series}" Spacing="8">
                       <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="viewModels:TreinoSerieViewModel">
-                          <Border Background="{StaticResource CardPurpleGradient}"
-                                  Stroke="#D9C5F5"
+                          <Border Background="{AppThemeBinding Light={StaticResource CardPurpleGradient}, Dark={StaticResource CardDarkGradient}}"
+                                  Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
                                   StrokeThickness="1"
                                   Padding="12"
                                   StrokeShape="RoundRectangle 14">
                             <VerticalStackLayout Spacing="10">
                               <Grid ColumnDefinitions="*,Auto">
                                 <Label Text="{Binding Numero, StringFormat='Série {0}'}"
-                                        TextColor="#000000"
                                        FontAttributes="Bold"
                                        VerticalOptions="Center" />
                                 <Label Grid.Column="1"
                                        Text="{Binding StatusTexto}"
-                                        TextColor="#000000"
                                        FontSize="10"
                                        FontAttributes="Bold"
                                        VerticalOptions="Center" />
@@ -206,29 +180,25 @@
                                 <Entry Text="{Binding CargaKg}"
                                        IsEnabled="{Binding PodeEditar}"
                                        Keyboard="Numeric"
-                                        TextColor="#000000"
-                                        Background="{StaticResource InputPurpleGradient}" />
+                                       Background="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}" />
                                 <Entry Grid.Column="1"
                                        Text="{Binding Repeticoes}"
                                        IsEnabled="{Binding PodeEditar}"
                                        Keyboard="Numeric"
-                                        TextColor="#000000"
-                                        Background="{StaticResource InputPurpleGradient}" />
+                                       Background="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}" />
                               </Grid>
                               <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                                 <Button Text="Salvar valores"
                                         Command="{Binding SalvarCommand}"
                                         IsEnabled="{Binding PodeEditar}"
-                                         Background="{StaticResource ButtonPurpleGradient}"
-                                        TextColor="#000000"
+                                        Background="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}"
                                         CornerRadius="10"
                                         HeightRequest="42" />
                                 <Button Grid.Column="1"
                                         Text="Concluir série"
                                         Command="{Binding MarcarConcluidaCommand}"
                                         IsEnabled="{Binding PodeEditar}"
-                                         Background="{StaticResource ButtonPurpleGradient}"
-                                         TextColor="#000000"
+                                        Background="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}"
                                         FontAttributes="Bold"
                                         CornerRadius="10"
                                         HeightRequest="42" />

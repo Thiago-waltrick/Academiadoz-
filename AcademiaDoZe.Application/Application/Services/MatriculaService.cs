@@ -21,6 +21,15 @@ namespace AcademiaDoZe.Application.Services
             _repo = repo;
         }
 
+        public Task<IReadOnlyCollection<MatriculaDto>> BuscarAsync(string termo, CancellationToken cancellationToken = default)
+        {
+            return Task.Run<IReadOnlyCollection<MatriculaDto>>(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return _repo.Buscar(termo).Select(m => m.ToDto()).ToList().AsReadOnly();
+            }, cancellationToken);
+        }
+
         public Task<MatriculaDto> ObterPorIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var ent = _repo.GetById(id);
@@ -51,34 +60,7 @@ namespace AcademiaDoZe.Application.Services
         {
             if (dto == null) throw new System.ArgumentNullException(nameof(dto));
 
-            // Regra: não permitir nova matrícula ativa se já existir
-            // Verificar via repositório se existe matrícula ativa
-            if (_repo.GetType().GetMethod("PossuiMatriculaAtiva") != null)
-            {
-                try
-                {
-                    var m = _repo.GetByAlunoId(dto.AlunoId);
-                    // se houver qualquer matrícula com dataFim nula ou >= hoje, impedir
-                    if (m != null && m.Any(x => x.DataFim == null || x.DataFim >= System.DateTime.UtcNow))
-                        throw new System.InvalidOperationException("Aluno já possui matrícula ativa.");
-                }
-                catch (System.Exception)
-                {
-                    // ignorar problemas de leitura e deixar fábrica validar
-                }
-            }
-
-            // Map AppMatriculaPlano -> Domain MatriculaPlano via EnumExtensions
-            var planoDomain = dto.Plano switch
-            {
-                _ => AcademiaDoZe.Domain.Enums.MatriculaPlano.Mensal
-            };
-            // Prefer using EnumExtensions if available
-            var plano = dto.Plano.ToDomain();
-            var res = Matricula.Criar(dto.Id, dto.AlunoId, plano, dto.DataInicio);
-            if (res.IsFailure) throw new System.InvalidOperationException("Falha ao criar Matrícula: " + string.Join(',', res.Notifications));
-
-            _repo.Add(res.Value);
+            _repo.Add(dto.ToEntity());
             return Task.CompletedTask;
         }
 
@@ -86,10 +68,14 @@ namespace AcademiaDoZe.Application.Services
         {
             if (dto == null) throw new System.ArgumentNullException(nameof(dto));
 
-            var res = Matricula.Criar(dto.Id, dto.AlunoId, dto.Plano.ToDomain(), dto.DataInicio);
-            if (res.IsFailure) throw new System.InvalidOperationException("Falha ao atualizar Matrícula: " + string.Join(',', res.Notifications));
+            _repo.Update(dto.ToEntity());
+            return Task.CompletedTask;
+        }
 
-            _repo.Update(res.Value);
+        public Task RemoverAsync(int id, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            _repo.Remove(_repo.GetById(id));
             return Task.CompletedTask;
         }
     }

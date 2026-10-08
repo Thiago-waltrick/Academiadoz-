@@ -1,4 +1,5 @@
 using AcademiaDoZe.Presentation.AppMaui.ViewModels;
+using AcademiaDoZe.Presentation.AppMaui.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Controls;
 
@@ -13,6 +14,7 @@ namespace AcademiaDoZe.Presentation.AppMaui.Views
             InitializeComponent();
             _services = services;
             BindingContext = viewModel;
+            ThemeToggleOverlay.Attach(this);
             viewModel.ConnectionSucceeded += OnConnectionSucceeded;
         }
 

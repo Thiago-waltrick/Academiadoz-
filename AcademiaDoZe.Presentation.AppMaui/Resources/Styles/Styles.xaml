@@ -2,65 +2,96 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
+  <Color x:Key="TextPrimaryLight">#241632</Color>
+  <Color x:Key="TextPrimaryDark">#F5F0FA</Color>
+  <Color x:Key="TextPlaceholderLight">#766A82</Color>
+  <Color x:Key="TextPlaceholderDark">#B6AFC2</Color>
+  <Color x:Key="BorderLight">#D9C5F5</Color>
+  <Color x:Key="BorderDark">#453653</Color>
+  <Color x:Key="ShellBackgroundLight">#F2E9FF</Color>
+  <Color x:Key="ShellBackgroundDark">#191420</Color>
+  <Color x:Key="ShellFlyoutLight">#F7F0FF</Color>
+  <Color x:Key="ShellFlyoutDark">#211A2B</Color>
+  <Color x:Key="ErrorLight">#B42318</Color>
+  <Color x:Key="ErrorDark">#FF8A80</Color>
+
   <LinearGradientBrush x:Key="PagePurpleGradient" StartPoint="0,0" EndPoint="1,1">
     <GradientStop Color="#FBF8FF" Offset="0.0" />
     <GradientStop Color="#F2E9FF" Offset="0.55" />
     <GradientStop Color="#E8D9FF" Offset="1.0" />
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="PageDarkGradient" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#15111B" Offset="0.0" />
+    <GradientStop Color="#1C1725" Offset="0.55" />
+    <GradientStop Color="#251C31" Offset="1.0" />
   </LinearGradientBrush>
   <LinearGradientBrush x:Key="CardPurpleGradient" StartPoint="0,0" EndPoint="1,1">
     <GradientStop Color="#FFFFFF" Offset="0.0" />
     <GradientStop Color="#F7F0FF" Offset="0.55" />
     <GradientStop Color="#EEE2FF" Offset="1.0" />
   </LinearGradientBrush>
+  <LinearGradientBrush x:Key="CardDarkGradient" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#211B2B" Offset="0.0" />
+    <GradientStop Color="#292236" Offset="0.55" />
+    <GradientStop Color="#30253F" Offset="1.0" />
+  </LinearGradientBrush>
   <LinearGradientBrush x:Key="InputPurpleGradient" StartPoint="0,0" EndPoint="1,1">
     <GradientStop Color="#FFFFFF" Offset="0.0" />
     <GradientStop Color="#F6EEFF" Offset="1.0" />
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="InputDarkGradient" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#191521" Offset="0.0" />
+    <GradientStop Color="#241D30" Offset="1.0" />
   </LinearGradientBrush>
   <LinearGradientBrush x:Key="ButtonPurpleGradient" StartPoint="0,0" EndPoint="1,1">
     <GradientStop Color="#E8D6FF" Offset="0.0" />
     <GradientStop Color="#DCC4FF" Offset="0.55" />
     <GradientStop Color="#CEAEFA" Offset="1.0" />
   </LinearGradientBrush>
+  <LinearGradientBrush x:Key="ButtonDarkGradient" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#8B5CF6" Offset="0.0" />
+    <GradientStop Color="#6D3BD1" Offset="1.0" />
+  </LinearGradientBrush>
 
   <Style TargetType="ContentPage">
-    <Setter Property="Background" Value="{StaticResource PagePurpleGradient}" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PagePurpleGradient}, Dark={StaticResource PageDarkGradient}}" />
   </Style>
   <Style TargetType="Frame">
-    <Setter Property="Background" Value="{StaticResource CardPurpleGradient}" />
-    <Setter Property="BorderColor" Value="#D9C5F5" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource CardPurpleGradient}, Dark={StaticResource CardDarkGradient}}" />
+    <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
   </Style>
 
   <Style TargetType="Label">
-    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
   </Style>
   <Style TargetType="Entry">
-    <Setter Property="TextColor" Value="#000000" />
-    <Setter Property="PlaceholderColor" Value="#000000" />
-    <Setter Property="Background" Value="{StaticResource InputPurpleGradient}" />
+    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+    <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource TextPlaceholderLight}, Dark={StaticResource TextPlaceholderDark}}" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}" />
   </Style>
   <Style TargetType="Editor">
-    <Setter Property="TextColor" Value="#000000" />
-    <Setter Property="PlaceholderColor" Value="#000000" />
-    <Setter Property="Background" Value="{StaticResource InputPurpleGradient}" />
+    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+    <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource TextPlaceholderLight}, Dark={StaticResource TextPlaceholderDark}}" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}" />
   </Style>
   <Style TargetType="Picker">
-    <Setter Property="TextColor" Value="#000000" />
-    <Setter Property="Background" Value="{StaticResource InputPurpleGradient}" />
+    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}" />
   </Style>
   <Style TargetType="SearchBar">
-    <Setter Property="TextColor" Value="#000000" />
-    <Setter Property="PlaceholderColor" Value="#000000" />
-    <Setter Property="Background" Value="{StaticResource InputPurpleGradient}" />
+    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+    <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource TextPlaceholderLight}, Dark={StaticResource TextPlaceholderDark}}" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}" />
   </Style>
   <Style TargetType="Button">
-    <Setter Property="TextColor" Value="#000000" />
-    <Setter Property="Background" Value="{StaticResource ButtonPurpleGradient}" />
+    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}" />
   </Style>
 
   <!-- Card border style -->
   <Style x:Key="CardBorder" TargetType="Border">
-    <Setter Property="Background" Value="{StaticResource CardPurpleGradient}" />
-    <Setter Property="Stroke" Value="#D9C5F5" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource CardPurpleGradient}, Dark={StaticResource CardDarkGradient}}" />
+    <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
     <Setter Property="Padding" Value="12" />
     <Setter Property="Margin" Value="6" />
     <Setter Property="StrokeShape" Value="RoundRectangle 8" />
@@ -68,24 +99,24 @@
 
   <!-- Primary Button -->
   <Style x:Key="ButtonPrimary" TargetType="Button">
-    <Setter Property="Background" Value="{StaticResource ButtonPurpleGradient}" />
-    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}" />
+    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
     <!-- CornerRadius removed to avoid XAML parse issues on some SDK/tooling versions -->
     <Setter Property="Padding" Value="10,8" />
   </Style>
 
   <!-- Secondary Button -->
   <Style x:Key="ButtonSecondary" TargetType="Button">
-    <Setter Property="Background" Value="{StaticResource ButtonPurpleGradient}" />
-    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}" />
+    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
     <!-- CornerRadius removed to avoid XAML parse issues on some SDK/tooling versions -->
     <Setter Property="Padding" Value="10,8" />
   </Style>
 
   <!-- Small Button -->
   <Style x:Key="ButtonSmall" TargetType="Button">
-    <Setter Property="Background" Value="{StaticResource ButtonPurpleGradient}" />
-    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}" />
+    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
     <Setter Property="FontSize" Value="12" />
     <!-- CornerRadius removed to avoid XAML parse issues on some SDK/tooling versions -->
     <Setter Property="Padding" Value="8,6" />
@@ -93,8 +124,8 @@
 
   <!-- Danger Button -->
   <Style x:Key="ButtonDanger" TargetType="Button">
-    <Setter Property="Background" Value="{StaticResource ButtonPurpleGradient}" />
-    <Setter Property="TextColor" Value="#000000" />
+    <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}" />
+    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
     <!-- CornerRadius removed to avoid XAML parse issues on some SDK/tooling versions -->
     <Setter Property="Padding" Value="10,8" />
   </Style>

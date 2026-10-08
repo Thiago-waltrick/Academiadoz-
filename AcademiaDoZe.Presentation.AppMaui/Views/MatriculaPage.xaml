@@ -1,91 +1,81 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:AcademiaDoZe.Presentation.AppMaui.Views"
              x:Class="AcademiaDoZe.Presentation.AppMaui.Views.MatriculaPage"
-             Title="Matrícula">
-
+             Title="{Binding Title}">
   <ScrollView>
-    <VerticalStackLayout Padding="12" Spacing="12">
+    <VerticalStackLayout Padding="16" Spacing="14">
+      <Label Text="{Binding ErrorMessage}"
+             TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}" />
 
-      <!-- Card 1: Aluno -->
-      <Frame BorderColor="#E0E0E0" Padding="12" HasShadow="False">
-        <VerticalStackLayout>
-          <Label Text="Aluno" FontAttributes="Bold" />
-          <HorizontalStackLayout Spacing="8">
-            <SearchBar Placeholder="Buscar por CPF" x:Name="CpfSearch" />
-            <Button Text="Pesquisar" x:Name="BtnSearchCpf" />
-          </HorizontalStackLayout>
-
-          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
-            <Image Source="placeholder.png" WidthRequest="64" HeightRequest="64" />
-            <VerticalStackLayout Grid.Column="1">
-              <Label Text="Nome do Aluno" FontAttributes="Bold" />
-              <Label Text="CPF: 000.000.000-00" />
-              <Label Text="Nascimento: 01/01/2000" />
+      <Border Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1" Padding="14" StrokeShape="RoundRectangle 12">
+        <VerticalStackLayout Spacing="10">
+          <Label Text="Aluno" FontAttributes="Bold" FontSize="18" />
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <SearchBar Placeholder="Buscar por CPF"
+                       Text="{Binding CpfBusca}"
+                       SearchCommand="{Binding SearchByCpfCommand}" />
+            <Button Grid.Column="1" Text="Pesquisar" Command="{Binding SearchByCpfCommand}" />
+          </Grid>
+          <Grid ColumnDefinitions="76,*" ColumnSpacing="12">
+            <Border WidthRequest="72" HeightRequest="72" Stroke="#8B5CF6" StrokeThickness="2" StrokeShape="Ellipse" Padding="0">
+              <Image Source="{Binding FotoAluno}" Aspect="AspectFill" />
+            </Border>
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
+              <Label Text="{Binding AlunoSelecionado.Nome}" FontAttributes="Bold" />
+              <Label Text="{Binding AlunoSelecionado.Cpf, StringFormat='CPF: {0}'}" />
+              <Label Text="{Binding AlunoSelecionado.DataNascimento, StringFormat='Nascimento: {0:dd/MM/yyyy}'}" />
             </VerticalStackLayout>
           </Grid>
         </VerticalStackLayout>
-      </Frame>
+      </Border>
 
-      <!-- Card 2: Plano e Vigência -->
-      <Frame BorderColor="#E0E0E0" Padding="12" HasShadow="False">
-        <VerticalStackLayout>
-          <Label Text="Plano e Vigência" FontAttributes="Bold" />
-          <Picker x:Name="PlanoPicker">
-            <Picker.Items>
-              <x:String>Mensal</x:String>
-              <x:String>Trimestral</x:String>
-              <x:String>Semestral</x:String>
-              <x:String>Anual</x:String>
-            </Picker.Items>
-          </Picker>
-          <DatePicker x:Name="DataInicio" />
-          <Label x:Name="DataTerminoLabel" Text="Término: --/--/----" />
+      <Border Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1" Padding="14" StrokeShape="RoundRectangle 12">
+        <VerticalStackLayout Spacing="10">
+          <Label Text="Plano e vigência" FontAttributes="Bold" FontSize="18" />
+          <Picker Title="Selecione o plano"
+                  ItemsSource="{Binding Planos}"
+                  SelectedItem="{Binding PlanoSelecionado}" />
+          <DatePicker Date="{Binding DataInicio}" />
+          <Label Text="{Binding DataFim, StringFormat='Término: {0:dd/MM/yyyy}'}" FontAttributes="Bold" />
         </VerticalStackLayout>
-      </Frame>
+      </Border>
 
-      <!-- Card 3: Saúde e Restrições -->
-      <Frame BorderColor="#E0E0E0" Padding="12" HasShadow="False">
-        <VerticalStackLayout>
-          <Label Text="Saúde e Restrições" FontAttributes="Bold" />
-          <CollectionView x:Name="RestricoesCollection" ItemsLayout="VerticalList">
-            <CollectionView.ItemTemplate>
+      <Border Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1" Padding="14" StrokeShape="RoundRectangle 12">
+        <VerticalStackLayout Spacing="10">
+          <Label Text="Objetivo" FontAttributes="Bold" FontSize="18" />
+          <Editor Text="{Binding Objetivo}" Placeholder="Objetivo do aluno" AutoSize="TextChanges" />
+          <Label Text="Restrições e observações" FontAttributes="Bold" FontSize="18" />
+          <VerticalStackLayout BindableLayout.ItemsSource="{Binding RestricoesDisponiveis}">
+            <BindableLayout.ItemTemplate>
               <DataTemplate>
-                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-                  <CheckBox />
-                  <Label Text="{Binding}" />
+                <HorizontalStackLayout Spacing="8">
+                  <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                  <Label Text="{Binding Nome}" VerticalOptions="Center" />
                 </HorizontalStackLayout>
               </DataTemplate>
-            </CollectionView.ItemTemplate>
-          </CollectionView>
-
-          <Label Text="Observações" />
-          <Editor x:Name="ObservacoesEditor" HeightRequest="100" />
+            </BindableLayout.ItemTemplate>
+          </VerticalStackLayout>
+          <Editor Text="{Binding ObservacoesRestricao}" Placeholder="Observações (opcional)" AutoSize="TextChanges" />
         </VerticalStackLayout>
-      </Frame>
+      </Border>
 
-      <!-- Card 4: Laudo Médico -->
-      <Frame BorderColor="#E0E0E0" Padding="12" HasShadow="False">
-        <VerticalStackLayout>
-          <Label Text="Laudo Médico" FontAttributes="Bold" />
-          <Label x:Name="LaudoStatusLabel" Text="Obrigatório" />
+      <Border Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1" Padding="14" StrokeShape="RoundRectangle 12">
+        <VerticalStackLayout Spacing="10">
+          <Label Text="Laudo médico (opcional)" FontAttributes="Bold" FontSize="18" />
+          <Label Text="{Binding LaudoStatus}" LineBreakMode="MiddleTruncation" />
           <HorizontalStackLayout Spacing="8">
-            <Button Text="Anexar" x:Name="BtnAnexar" />
-            <Button Text="Remover" x:Name="BtnRemover" />
+            <Button Text="Anexar laudo" Command="{Binding AttachLaudoCommand}" />
+            <Button Text="Remover" Command="{Binding RemoveLaudoCommand}" />
           </HorizontalStackLayout>
         </VerticalStackLayout>
-      </Frame>
+      </Border>
 
-      <!-- Card 5: Ações -->
-      <Frame BorderColor="#E0E0E0" Padding="12" HasShadow="False">
-        <HorizontalStackLayout HorizontalOptions="End" Spacing="12">
-          <Button Text="Cancelar" x:Name="BtnCancelar" StyleClass="ButtonSecondary" />
-          <Button Text="Guardar" x:Name="BtnGuardar" StyleClass="ButtonPrimary" />
-        </HorizontalStackLayout>
-      </Frame>
-
+      <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+      <HorizontalStackLayout HorizontalOptions="End" Spacing="10">
+        <Button Text="Cancelar" Command="{Binding CancelCommand}" />
+        <Button Text="Guardar" Command="{Binding SaveCommand}" />
+      </HorizontalStackLayout>
     </VerticalStackLayout>
   </ScrollView>
-
 </ContentPage>

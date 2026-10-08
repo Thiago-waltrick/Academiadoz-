@@ -8,5 +8,6 @@ namespace AcademiaDoZe.Application.DTOs
         public string Nome { get; set; } = string.Empty;
         public string ContentType { get; set; } = string.Empty;
         public long Tamanho { get; set; }
+        public byte[]? Conteudo { get; set; }
     }
 }

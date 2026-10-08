@@ -2,26 +2,58 @@
 <Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        x:Class="AcademiaDoZe.Presentation.AppMaui.AppShell"
-       Shell.ForegroundColor="#000000"
-       Shell.TitleColor="#000000"
-       Background="{StaticResource PagePurpleGradient}"
-       Shell.BackgroundColor="#F2E9FF"
-       Shell.FlyoutBackgroundColor="#F7F0FF">
+       Shell.ForegroundColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+       Shell.TitleColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+       Background="{AppThemeBinding Light={StaticResource PagePurpleGradient}, Dark={StaticResource PageDarkGradient}}"
+       Shell.BackgroundColor="{AppThemeBinding Light={StaticResource ShellBackgroundLight}, Dark={StaticResource ShellBackgroundDark}}"
+       Shell.FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource ShellFlyoutLight}, Dark={StaticResource ShellFlyoutDark}}">
 
-  <FlyoutItem Title="Dashboard" Icon="icon_dashboard.png">
+  <FlyoutItem Title="🏠 Dashboard" SemanticProperties.Description="Início">
+    <FlyoutItem.Icon>
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe88a;" Size="32" Color="#A78BFA" />
+    </FlyoutItem.Icon>
     <ShellContent x:Name="DashboardShellContent" Title="Dashboard" Route="dashboard" />
   </FlyoutItem>
 
-  <FlyoutItem Title="Logradouros" Icon="icon_map.png">
+  <FlyoutItem Title="📍 Logradouros" SemanticProperties.Description="Consultar e gerenciar logradouros">
+    <FlyoutItem.Icon>
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe55b;" Size="32" Color="#8B5CF6" />
+    </FlyoutItem.Icon>
     <ShellContent x:Name="LogradourosShellContent" Title="Logradouros" Route="logradouros" />
   </FlyoutItem>
 
-  <FlyoutItem Title="Treino ativo">
+  <FlyoutItem Title="🏋️ Treino ativo" SemanticProperties.Description="Acessar o treino ativo">
+    <FlyoutItem.Icon>
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xeb43;" Size="32" Color="#C084FC" />
+    </FlyoutItem.Icon>
     <ShellContent x:Name="TreinoShellContent" Title="Treino ativo" Route="treino" />
   </FlyoutItem>
 
-  <FlyoutItem Title="Matrículas">
+  <FlyoutItem Title="🎓 Matrículas" SemanticProperties.Description="Consultar e gerenciar matrículas">
+    <FlyoutItem.Icon>
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe85d;" Size="32" Color="#7C3AED" />
+    </FlyoutItem.Icon>
     <ShellContent x:Name="MatriculasShellContent" Title="Matrículas" Route="matriculas" />
   </FlyoutItem>
+
+  <FlyoutItem Title="👤 Meu perfil" SemanticProperties.Description="Acessar meu perfil">
+    <FlyoutItem.Icon>
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe853;" Size="32" Color="#D8B4FE" />
+    </FlyoutItem.Icon>
+    <ShellContent x:Name="ProfileShellContent" Title="Meu perfil" Route="perfil" />
+  </FlyoutItem>
+
+  <FlyoutItem Title="⚙️ Configurações" SemanticProperties.Description="Configurar a aplicação">
+    <FlyoutItem.Icon>
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b8;" Size="32" Color="#A78BFA" />
+    </FlyoutItem.Icon>
+    <ShellContent x:Name="ConfigShellContent" Title="Configurações" Route="configuracoes" />
+  </FlyoutItem>
+
+  <MenuItem Text="🚪 Sair / trocar usuário" Clicked="OnLogoutClicked">
+    <MenuItem.IconImageSource>
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe879;" Size="32" Color="#A1A1AA" />
+    </MenuItem.IconImageSource>
+  </MenuItem>
 
 </Shell>

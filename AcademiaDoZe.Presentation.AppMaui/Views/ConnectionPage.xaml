@@ -2,66 +2,129 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AcademiaDoZe.Presentation.AppMaui.Views.ConnectionPage"
-             Title="Conectar ao banco">
-  <ScrollView>
-    <Grid Padding="24" MinimumHeightRequest="600">
-      <Border Padding="24"
-              Background="{StaticResource CardPurpleGradient}"
-              Stroke="#D9C5F5"
-              StrokeShape="RoundRectangle 16"
+             Title="Entrar">
+  <Grid>
+    <ScrollView>
+      <Grid Padding="24,112,24,112" MinimumHeightRequest="600">
+      <Border Padding="32"
+              Background="{AppThemeBinding Light={StaticResource CardPurpleGradient}, Dark={StaticResource CardDarkGradient}}"
+              Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
+              StrokeThickness="1"
+              StrokeShape="RoundRectangle 24"
               VerticalOptions="Center"
               HorizontalOptions="Center"
-              MaximumWidthRequest="480">
-        <VerticalStackLayout Spacing="14">
-          <Label Text="Conectar ao SQL Server"
-                 FontSize="26"
-                 FontAttributes="Bold"
-                  TextColor="#000000" />
-          <Label Text="Informe as credenciais SQL para validar a conexão antes de abrir o sistema."
-                  TextColor="#000000" />
+              MaximumWidthRequest="440">
+        <Border.Shadow>
+          <Shadow Brush="#70000000" Opacity="0.16" Radius="24" Offset="0,10" />
+        </Border.Shadow>
 
-          <Label Text="Servidor" TextColor="#000000" />
-          <Entry Text="{Binding Server}"
-                 Placeholder="localhost"
-                 TextColor="#000000"
-                 PlaceholderColor="#000000"
-                 Background="{StaticResource InputPurpleGradient}" />
+        <VerticalStackLayout Spacing="18">
+          <VerticalStackLayout Spacing="5">
+            <Label Text="Bem-vindo de volta"
+                   FontSize="27"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center" />
+            <Label Text="Entre com suas credenciais para continuar."
+                   FontSize="14"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPlaceholderLight}, Dark={StaticResource TextPlaceholderDark}}"
+                   HorizontalTextAlignment="Center" />
+          </VerticalStackLayout>
 
-          <Label Text="Banco de dados" TextColor="#000000" />
-          <Entry Text="{Binding Database}"
-                 Placeholder="db_academia_do_ze"
-                 TextColor="#000000"
-                 PlaceholderColor="#000000"
-                 Background="{StaticResource InputPurpleGradient}" />
+          <VerticalStackLayout Spacing="8">
+            <Label Text="USUÁRIO"
+                   FontSize="12"
+                   CharacterSpacing="1"
+                   FontAttributes="Bold" />
+            <Border HeightRequest="56"
+                    Padding="14,0"
+                    Background="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}"
+                    Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
+                    StrokeShape="RoundRectangle 14">
+              <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                <Label Text="&#xe7fd;"
+                       FontFamily="MaterialIcons"
+                       FontSize="28"
+                       TextColor="#8B5CF6"
+                       VerticalTextAlignment="Center" />
+                <Entry Grid.Column="1"
+                       Text="{Binding Username}"
+                       Placeholder="Digite seu usuário"
+                       BackgroundColor="Transparent"
+                       ClearButtonVisibility="WhileEditing"
+                       ReturnType="Next"
+                       VerticalOptions="Center" />
+              </Grid>
+            </Border>
+          </VerticalStackLayout>
 
-          <Label Text="Usuário SQL" TextColor="#000000" />
-          <Entry Text="{Binding Username}"
-                 Placeholder="sa"
-                 TextColor="#000000"
-                 PlaceholderColor="#000000"
-                 Background="{StaticResource InputPurpleGradient}" />
+          <VerticalStackLayout Spacing="8">
+            <Label Text="SENHA"
+                   FontSize="12"
+                   CharacterSpacing="1"
+                   FontAttributes="Bold" />
+            <Border HeightRequest="56"
+                    Padding="14,0"
+                    Background="{AppThemeBinding Light={StaticResource InputPurpleGradient}, Dark={StaticResource InputDarkGradient}}"
+                    Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}"
+                    StrokeShape="RoundRectangle 14">
+              <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                <Label Text="&#xe897;"
+                       FontFamily="MaterialIcons"
+                       FontSize="28"
+                       TextColor="#8B5CF6"
+                       VerticalTextAlignment="Center" />
+                <Entry Grid.Column="1"
+                       Text="{Binding Password}"
+                       Placeholder="Digite sua senha"
+                       IsPassword="True"
+                       BackgroundColor="Transparent"
+                       ReturnType="Go"
+                       VerticalOptions="Center" />
+              </Grid>
+            </Border>
+          </VerticalStackLayout>
 
-          <Label Text="Senha" TextColor="#000000" />
-          <Entry Text="{Binding Password}"
-                 IsPassword="True"
-                 TextColor="#000000"
-                 PlaceholderColor="#000000"
-                 Background="{StaticResource InputPurpleGradient}" />
-
-          <Button Text="Testar conexão e entrar"
+          <Button Text="Entrar"
                   Command="{Binding ConnectCommand}"
-                  Background="{StaticResource ButtonPurpleGradient}"
-                  TextColor="#000000"
-                  Padding="14,12" />
+                  HeightRequest="54"
+                  CornerRadius="15"
+                  FontSize="16"
+                  FontAttributes="Bold"
+                  TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+                  Background="{AppThemeBinding Light={StaticResource ButtonPurpleGradient}, Dark={StaticResource ButtonDarkGradient}}">
+            <Button.ImageSource>
+              <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe0be;" Size="26" Color="#8B5CF6" />
+            </Button.ImageSource>
+          </Button>
 
           <ActivityIndicator IsRunning="{Binding IsConnecting}"
                              IsVisible="{Binding IsConnecting}"
-                             Color="#B89AE8" />
+                             HorizontalOptions="Center"
+                             Color="#8B5CF6" />
           <Label Text="{Binding StatusMessage}"
-                 TextColor="#000000"
+                 FontSize="13"
+                 TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}"
+                 HorizontalTextAlignment="Center"
                  LineBreakMode="WordWrap" />
         </VerticalStackLayout>
       </Border>
-    </Grid>
-  </ScrollView>
+      </Grid>
+    </ScrollView>
+
+    <VerticalStackLayout HorizontalOptions="End"
+                         VerticalOptions="Start"
+                         Margin="0,12,20,0"
+                         Spacing="2"
+                         InputTransparent="True">
+      <Image Source="academiadoze.png"
+             WidthRequest="64"
+             HeightRequest="64"
+             Aspect="AspectFit" />
+      <Label Text="Academia do Zé"
+             FontSize="11"
+             FontAttributes="Bold"
+             TextColor="#8B5CF6"
+             HorizontalTextAlignment="Center" />
+    </VerticalStackLayout>
+  </Grid>
 </ContentPage>

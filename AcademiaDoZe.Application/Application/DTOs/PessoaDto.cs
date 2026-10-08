@@ -12,5 +12,6 @@ namespace AcademiaDoZe.Application.DTOs
         public DateTime DataNascimento { get; set; }
         public string Telefone { get; set; } = string.Empty;
         public LogradouroDto Endereco { get; set; } = new LogradouroDto();
+        public byte[]? FotoConteudo { get; set; }
     }
 }

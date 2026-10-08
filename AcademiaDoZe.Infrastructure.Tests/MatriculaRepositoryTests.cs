@@ -78,11 +78,19 @@ namespace AcademiaDoZe.Infrastructure.Tests
             var a12 = provider.CreateParameter("@logradouro_cep", p5.Value);
             var alunoId = provider.ExecuteInsert(alunoSql, new System.Data.Common.DbParameter[] { a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12 });
             alunoId.Should().BeGreaterThan(0);
+            var foto = new byte[] { 137, 80, 78, 71 };
+            provider.ExecuteNonQuery("UPDATE dbo.tb_aluno SET foto_conteudo = @foto WHERE Id = @id", new System.Data.Common.DbParameter[]
+            {
+                provider.CreateParameter("@foto", foto),
+                provider.CreateParameter("@id", alunoId)
+            });
 
             // criar e adicionar via repositório
             var repo = new MatriculaRepository(provider);
             var dataInicio = DateTime.UtcNow;
-            var cria = Matricula.Criar(0, alunoId, MatriculaPlano.Mensal, dataInicio);
+            var restricoesIniciais = MatriculaRestricoes.Diabetes | MatriculaRestricoes.Alergias;
+            var cria = Matricula.Criar(0, alunoId, MatriculaPlano.Mensal, dataInicio,
+                "Condicionamento", restricoesIniciais, "Acompanhamento médico", "laudo.pdf", "application/pdf", new byte[] { 1, 2, 3 });
             cria.IsSuccess.Should().BeTrue();
             var matricula = cria.Value!;
 
@@ -104,16 +112,36 @@ namespace AcademiaDoZe.Infrastructure.Tests
 
             // atualizar
             var novoInicio = dataInicio.AddDays(1);
-            var updRes = Matricula.Criar(id, alunoId, MatriculaPlano.Mensal, novoInicio);
+            var byId = repo.ObterPorId(id);
+            byId.Should().NotBeNull();
+            byId.DataInicio.Date.Should().Be(dataInicio.Date);
+            byId.AlunoNome.Should().Be(a1.Value?.ToString());
+            byId.AlunoCpf.Should().Be(cpf);
+            byId.AlunoDataNascimento?.Date.Should().Be(dataNascimento.Date);
+            byId.AlunoFotoConteudo.Should().Equal(foto);
+            byId.Restricoes.Should().Be(restricoesIniciais);
+            byId.LaudoNome.Should().Be("laudo.pdf");
+            byId.LaudoConteudo.Should().Equal(new byte[] { 1, 2, 3 });
+            repo.Buscar(cpf).Should().ContainSingle(item => item.Id == id);
+
+            var restricoesEditadas = MatriculaRestricoes.PressaoAlta | MatriculaRestricoes.RemedioContinuo;
+            var updRes = Matricula.Criar(id, alunoId, MatriculaPlano.Trimestral, novoInicio,
+                "Condicionamento atualizado", restricoesEditadas, "Nova observação", "laudo-atualizado.pdf", "application/pdf", new byte[] { 4, 5 });
             updRes.IsSuccess.Should().BeTrue();
             repo.Update(updRes.Value!);
 
-            var byId = repo.ObterPorId(id);
-            byId.Should().NotBeNull();
-            byId.DataInicio.Should().BeCloseTo(novoInicio, TimeSpan.FromSeconds(2));
+            var editada = repo.ObterPorId(id);
+            editada.Restricoes.Should().Be(restricoesEditadas);
+            editada.Objetivo.Should().Be("Condicionamento atualizado");
+            editada.ObsRestricao.Should().Be("Nova observação");
+            editada.LaudoConteudo.Should().Equal(new byte[] { 4, 5 });
+            editada.DataFim.Should().Be(novoInicio.Date.AddMonths(3));
+            repo.Buscar(id.ToString()).Should().ContainSingle(item => item.Id == id);
 
             // remover
-            repo.Remove(byId);
+            repo.Remove(editada);
+            Action procurarRemovida = () => repo.ObterPorId(id);
+            procurarRemovida.Should().Throw<Exception>();
 
             // após remoção, pode haver histórico; verificar que não possui matrícula ativa
             repo.PossuiMatriculaAtiva(alunoId).Should().BeFalse();

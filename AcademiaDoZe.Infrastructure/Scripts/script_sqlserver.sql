@@ -39,8 +39,15 @@ BEGIN
         logradouro_bairro NVARCHAR(150) NULL,
         logradouro_cidade NVARCHAR(100) NULL,
         logradouro_estado NVARCHAR(2) NULL,
-        logradouro_cep VARCHAR(8) NULL
+        logradouro_cep VARCHAR(8) NULL,
+        foto_conteudo VARBINARY(MAX) NULL
     );
+END
+GO
+
+IF COL_LENGTH('dbo.tb_aluno', 'foto_conteudo') IS NULL
+BEGIN
+    ALTER TABLE dbo.tb_aluno ADD foto_conteudo VARBINARY(MAX) NULL;
 END
 GO
 
@@ -79,35 +86,87 @@ BEGIN
     CREATE TABLE dbo.tb_matricula (
         Id INT IDENTITY(1,1) PRIMARY KEY,
         aluno_id INT NOT NULL,
-        plano INT NULL,
-        data_inicio DATETIME2 NULL,
-        data_fim DATETIME2 NULL
+        plano INT NOT NULL,
+        data_inicio DATE NOT NULL,
+        data_fim DATE NOT NULL,
+        objetivo VARCHAR(200) NULL,
+        restricoes INT NOT NULL CONSTRAINT DF_tb_matricula_restricoes DEFAULT (0),
+        obs_restricao VARCHAR(500) NULL,
+        laudo_nome VARCHAR(255) NULL,
+        laudo_content_type VARCHAR(100) NULL,
+        laudo_conteudo VARBINARY(MAX) NULL
     );
 END
 GO
 
--- Adiciona colunas objetivo e obs_restricao se não existirem (sem apagar dados existentes)
+-- Adiciona os campos de Matrícula sem apagar dados existentes.
 IF COL_LENGTH('dbo.tb_matricula', 'objetivo') IS NULL
 BEGIN
     ALTER TABLE dbo.tb_matricula ADD objetivo VARCHAR(200) NULL;
 END
 GO
 
-IF COL_LENGTH('dbo.tb_matricula', 'obs_restricao') IS NULL
+IF COL_LENGTH('dbo.tb_matricula', 'restricoes') IS NULL
 BEGIN
-    ALTER TABLE dbo.tb_matricula ADD obs_restricao VARCHAR(200) NULL;
+    ALTER TABLE dbo.tb_matricula ADD restricoes INT NOT NULL CONSTRAINT DF_tb_matricula_restricoes DEFAULT (0);
 END
 GO
 
--- Preencher registros existentes com valores de evidência quando aplicável
-UPDATE dbo.tb_matricula SET objetivo = 'Thiago Augusto Ruskowski Waltrick' WHERE objetivo IS NULL;
-UPDATE dbo.tb_matricula SET obs_restricao = 'SQLServer' WHERE obs_restricao IS NULL;
+IF COL_LENGTH('dbo.tb_matricula', 'obs_restricao') IS NULL
+BEGIN
+    ALTER TABLE dbo.tb_matricula ADD obs_restricao VARCHAR(500) NULL;
+END
 GO
 
--- Tornar objetivo NOT NULL (após preenchimento seguro)
-IF COL_LENGTH('dbo.tb_matricula', 'objetivo') IS NOT NULL
+IF COL_LENGTH('dbo.tb_matricula', 'laudo_nome') IS NULL
 BEGIN
-    ALTER TABLE dbo.tb_matricula ALTER COLUMN objetivo VARCHAR(200) NOT NULL;
+    ALTER TABLE dbo.tb_matricula ADD laudo_nome VARCHAR(255) NULL;
+END
+GO
+
+IF COL_LENGTH('dbo.tb_matricula', 'laudo_content_type') IS NULL
+BEGIN
+    ALTER TABLE dbo.tb_matricula ADD laudo_content_type VARCHAR(100) NULL;
+END
+GO
+
+IF COL_LENGTH('dbo.tb_matricula', 'laudo_conteudo') IS NULL
+BEGIN
+    ALTER TABLE dbo.tb_matricula ADD laudo_conteudo VARBINARY(MAX) NULL;
+END
+GO
+
+-- Os planos antigos usavam 0..3; converte uma vez para o contrato 1..4.
+IF EXISTS (SELECT 1 FROM dbo.tb_matricula WHERE plano = 0)
+BEGIN
+    UPDATE dbo.tb_matricula
+    SET plano = CASE WHEN plano BETWEEN 0 AND 3 THEN plano + 1 ELSE plano END;
+END
+GO
+
+UPDATE dbo.tb_matricula SET plano = 1 WHERE plano IS NULL OR plano NOT BETWEEN 1 AND 4;
+UPDATE dbo.tb_matricula SET data_inicio = CONVERT(DATE, GETDATE()) WHERE data_inicio IS NULL;
+UPDATE dbo.tb_matricula
+SET data_fim = CASE plano
+    WHEN 1 THEN DATEADD(MONTH, 1, CONVERT(DATE, data_inicio))
+    WHEN 2 THEN DATEADD(MONTH, 3, CONVERT(DATE, data_inicio))
+    WHEN 3 THEN DATEADD(MONTH, 6, CONVERT(DATE, data_inicio))
+    ELSE DATEADD(YEAR, 1, CONVERT(DATE, data_inicio))
+END
+WHERE data_fim IS NULL;
+GO
+
+ALTER TABLE dbo.tb_matricula ALTER COLUMN plano INT NOT NULL;
+ALTER TABLE dbo.tb_matricula ALTER COLUMN data_inicio DATE NOT NULL;
+ALTER TABLE dbo.tb_matricula ALTER COLUMN data_fim DATE NOT NULL;
+ALTER TABLE dbo.tb_matricula ALTER COLUMN objetivo VARCHAR(200) NULL;
+ALTER TABLE dbo.tb_matricula ALTER COLUMN obs_restricao VARCHAR(500) NULL;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = 'CK_tb_matricula_plano')
+BEGIN
+    ALTER TABLE dbo.tb_matricula
+        ADD CONSTRAINT CK_tb_matricula_plano CHECK (plano BETWEEN 1 AND 4);
 END
 GO
 

@@ -2,20 +2,36 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AcademiaDoZe.Presentation.AppMaui.Views.MatriculaListPage"
+             x:Name="PageRoot"
              Title="Matrículas">
   <ContentPage.Resources>
     <ResourceDictionary Source="../Resources/Styles/Styles.xaml" />
   </ContentPage.Resources>
 
-  <Grid Padding="16" RowDefinitions="Auto,Auto,*" RowSpacing="8">
+  <Grid Padding="16" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="8">
     <Label Grid.Row="0"
            Text="{Binding LoadErrorMessage}"
-           TextColor="#000000"
+           TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}"
            LineBreakMode="WordWrap" />
-    <ActivityIndicator Grid.Row="1"
-                       IsRunning="{Binding IsBusy}"
-                       IsVisible="{Binding IsBusy}" />
-    <RefreshView Grid.Row="2"
+    <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+      <SearchBar Placeholder="Buscar por aluno, CPF ou matrícula"
+                 Text="{Binding SearchText}"
+                 SearchCommand="{Binding SearchCommand}" />
+      <Button Grid.Column="1" Text="Pesquisar" Command="{Binding SearchCommand}">
+        <Button.ImageSource>
+          <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" Size="26" Color="#8B5CF6" />
+        </Button.ImageSource>
+      </Button>
+    </Grid>
+    <Button Grid.Row="2"
+            Text="Nova matrícula"
+            HorizontalOptions="End"
+            Command="{Binding AddCommand}">
+      <Button.ImageSource>
+        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe145;" Size="26" Color="#8B5CF6" />
+      </Button.ImageSource>
+    </Button>
+    <RefreshView Grid.Row="3"
                  IsRefreshing="{Binding IsRefreshing}"
                  Command="{Binding LoadMatriculasCommand}">
       <CollectionView ItemsSource="{Binding Matriculas}"
@@ -27,18 +43,35 @@
         </CollectionView.EmptyView>
         <CollectionView.ItemTemplate>
           <DataTemplate>
-            <Border Style="{StaticResource CardBorder}">
-              <Grid ColumnDefinitions="*,Auto">
-                <VerticalStackLayout>
+            <Border Style="{StaticResource CardBorder}" Margin="0,4">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <VerticalStackLayout Spacing="3">
                   <Label Text="{Binding Id, StringFormat='Matrícula #{0}'}"
                          FontAttributes="Bold" />
-                  <Label Text="{Binding Aluno.Nome}" />
-                  <Label Text="{Binding Plano}" />
+                  <Label Text="{Binding Aluno.Nome}" FontAttributes="Bold" />
+                  <Label Text="{Binding Aluno.Cpf, StringFormat='CPF: {0}'}" />
+                  <Label Text="{Binding Aluno.DataNascimento, StringFormat='Nascimento: {0:dd/MM/yyyy}'}" />
+                  <Label Text="{Binding Plano, StringFormat='Plano: {0}'}" />
                   <Label Text="{Binding DataInicio, StringFormat='Início: {0:dd/MM/yyyy}'}" />
+                  <Label Text="{Binding DataFim, StringFormat='Término: {0:dd/MM/yyyy}'}" />
+                  <Label Text="{Binding Restricoes, StringFormat='Restrições: {0}'}" />
                 </VerticalStackLayout>
-                <Label Grid.Column="1"
-                       Text="{Binding DataFim, StringFormat='Término: {0:dd/MM/yyyy}'}"
-                       HorizontalOptions="End" />
+                <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                  <Button Text="Editar"
+                          Command="{Binding BindingContext.EditCommand, Source={x:Reference PageRoot}}"
+                          CommandParameter="{Binding .}">
+                    <Button.ImageSource>
+                      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe3c9;" Size="26" Color="#8B5CF6" />
+                    </Button.ImageSource>
+                  </Button>
+                  <Button Text="Excluir"
+                          Command="{Binding BindingContext.DeleteCommand, Source={x:Reference PageRoot}}"
+                          CommandParameter="{Binding .}">
+                    <Button.ImageSource>
+                      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe872;" Size="26" Color="#8B5CF6" />
+                    </Button.ImageSource>
+                  </Button>
+                </VerticalStackLayout>
               </Grid>
             </Border>
           </DataTemplate>

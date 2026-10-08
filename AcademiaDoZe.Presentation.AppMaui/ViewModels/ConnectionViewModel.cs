@@ -49,12 +49,16 @@ public partial class ConnectionViewModel : ObservableObject
         if (IsConnecting)
             return;
 
-        if (string.IsNullOrWhiteSpace(Server) ||
-            string.IsNullOrWhiteSpace(Database) ||
-            string.IsNullOrWhiteSpace(Username) ||
+        if (string.IsNullOrWhiteSpace(Username) ||
             string.IsNullOrWhiteSpace(Password))
         {
-            StatusMessage = "Preencha servidor, banco, usuário e senha.";
+            StatusMessage = "Preencha usuário e senha.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Server) || string.IsNullOrWhiteSpace(Database))
+        {
+            StatusMessage = "A configuração do servidor ou do banco de dados está ausente.";
             return;
         }
 
@@ -77,9 +81,26 @@ public partial class ConnectionViewModel : ObservableObject
 
             var provider = new DbProvider("Microsoft.Data.SqlClient", connectionString);
             await provider.ExecuteScalarAsync("SELECT 1");
+            await DbInitializer.EnsureMatriculaSchemaAsync(provider);
 
             _repositoryConfig.DatabaseType = AcademiaDoZe.Application.Enums.AppDatabaseType.SqlServer;
             _repositoryConfig.ConnectionString = connectionString;
+            try
+            {
+                await SecureStorage.Default.SetAsync("DbSenha", Password);
+            }
+            catch
+            {
+                try
+                {
+                    SecureStorage.Default.Remove("DbSenha");
+                }
+                catch
+                {
+                    // A conexão deve continuar funcionando mesmo se o armazenamento seguro estiver indisponível.
+                }
+            }
+
             Preferences.Set("DbServidor", Server.Trim());
             Preferences.Set("DbBanco", Database.Trim());
             Preferences.Set("DbUsuario", Username.Trim());

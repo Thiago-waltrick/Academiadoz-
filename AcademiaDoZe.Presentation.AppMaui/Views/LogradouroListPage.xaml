@@ -15,7 +15,11 @@
     <HorizontalStackLayout Grid.Row="0" Padding="12" Spacing="8">
       <Picker WidthRequest="140" ItemsSource="{Binding FilterTypes}" SelectedItem="{Binding SelectedFilterType}" />
       <Entry Placeholder="Buscar" Text="{Binding SearchText}" HorizontalOptions="FillAndExpand" ReturnCommand="{Binding SearchLogradourosCommand}" />
-      <Button Text="Buscar" Command="{Binding SearchLogradourosCommand}" Style="{StaticResource ButtonPrimary}" />
+      <Button Text="Buscar" Command="{Binding SearchLogradourosCommand}" Style="{StaticResource ButtonPrimary}">
+        <Button.ImageSource>
+          <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" Size="26" Color="White" />
+        </Button.ImageSource>
+      </Button>
     </HorizontalStackLayout>
 
     <!-- Collection with Refresh -->
@@ -34,8 +38,16 @@
                 </VerticalStackLayout>
 
                 <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="8" HorizontalOptions="End">
-                  <Button Text="Editar" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditLogradouroCommand}" CommandParameter="{Binding .}" />
-                  <Button Text="Excluir" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteLogradouroCommand}" CommandParameter="{Binding .}" Style="{StaticResource ButtonDanger}" />
+                  <Button Text="Editar" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditLogradouroCommand}" CommandParameter="{Binding .}">
+                    <Button.ImageSource>
+                      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe3c9;" Size="26" Color="#8B5CF6" />
+                    </Button.ImageSource>
+                  </Button>
+                  <Button Text="Excluir" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteLogradouroCommand}" CommandParameter="{Binding .}" Style="{StaticResource ButtonDanger}">
+                    <Button.ImageSource>
+                      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe872;" Size="26" Color="White" />
+                    </Button.ImageSource>
+                  </Button>
                 </HorizontalStackLayout>
               </Grid>
             </Border>
@@ -45,7 +57,11 @@
     </RefreshView>
 
     <!-- Floating Action Button -->
-    <Button Grid.Row="2" Text="+" Command="{Binding AddLogradouroCommand}" Style="{StaticResource ButtonPrimary}" HorizontalOptions="End" VerticalOptions="End" Margin="16" WidthRequest="56" HeightRequest="56" />
+    <Button Grid.Row="2" Text="+" Command="{Binding AddLogradouroCommand}" Style="{StaticResource ButtonPrimary}" HorizontalOptions="End" VerticalOptions="End" Margin="16" WidthRequest="64" HeightRequest="64" SemanticProperties.Description="Adicionar logradouro">
+      <Button.ImageSource>
+        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe145;" Size="32" Color="White" />
+      </Button.ImageSource>
+    </Button>
 
   </Grid>
 

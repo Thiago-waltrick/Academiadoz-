@@ -43,7 +43,7 @@
 
       <Button Command="{Binding SalvarConfiguracoesAsyncCommand}" Style="{StaticResource ButtonPrimary}">
         <Button.ImageSource>
-          <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe161;" />
+          <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe161;" Size="26" Color="#8B5CF6" />
         </Button.ImageSource>
         <Button.Text>Salvar</Button.Text>
       </Button>

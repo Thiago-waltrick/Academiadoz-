@@ -2,6 +2,7 @@ using Microsoft.Maui.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using AcademiaDoZe.Presentation.AppMaui.Messages;
+using AcademiaDoZe.Presentation.AppMaui.Services;
 using AcademiaDoZe.Presentation.AppMaui.Views;
 
 namespace AcademiaDoZe.Presentation.AppMaui
@@ -15,19 +16,17 @@ namespace AcademiaDoZe.Presentation.AppMaui
             _services = services;
             InitializeComponent();
 
-            // Subscribe to theme changes
+            ThemeManager.Apply(Microsoft.Maui.Storage.Preferences.Get("AppTheme", "System"));
             WeakReferenceMessenger.Default.Register<TemaPreferencesUpdatedMessage>(this, (r, m) =>
-            {
-                var val = m.Value?.ToLowerInvariant() ?? "system";
-                if (val == "light") global::Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Light;
-                else if (val == "dark") global::Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Dark;
-                else global::Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Unspecified;
-            });
+                MainThread.BeginInvokeOnMainThread(() => ThemeManager.Apply(m.Value)));
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(_services.GetRequiredService<ConnectionPage>());
+            return new Window(_services.GetRequiredService<ConnectionPage>())
+            {
+                Title = "Academia do Zé"
+            };
         }
     }
 }

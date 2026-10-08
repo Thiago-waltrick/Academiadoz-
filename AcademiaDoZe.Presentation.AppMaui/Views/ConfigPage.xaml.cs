@@ -1,5 +1,6 @@
 using Microsoft.Maui.Controls;
 using AcademiaDoZe.Presentation.AppMaui.ViewModels;
+using AcademiaDoZe.Presentation.AppMaui.Services;
 
 namespace AcademiaDoZe.Presentation.AppMaui.Views
 {
@@ -9,6 +10,7 @@ namespace AcademiaDoZe.Presentation.AppMaui.Views
         {
             InitializeComponent();
             BindingContext = viewModel;
+            ThemeToggleOverlay.Attach(this);
         }
     }
 }

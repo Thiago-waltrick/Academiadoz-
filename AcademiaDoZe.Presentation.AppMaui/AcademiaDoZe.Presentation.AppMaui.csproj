@@ -16,13 +16,21 @@
 	<!-- Do not attempt MSIX packaging by default -->
 	<WindowsPackageType>None</WindowsPackageType>
 
-	<ApplicationTitle>AcademiaDoZe</ApplicationTitle>
+	<ApplicationTitle>Academia do Zé</ApplicationTitle>
   </PropertyGroup>
 
   <ItemGroup>
 	<ProjectReference Include="..\AcademiaDoZe.Application\AcademiaDoZe.Application.csproj" />
 	<ProjectReference Include="..\AcademiaDoZe.Domain\AcademiaDoZe.Domain.csproj" />
 	<ProjectReference Include="..\AcademiaDoZe.Infrastructure\AcademiaDoZe.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<MauiImage Remove="Resources\Images\academiadoze.png" />
+	<MauiImage Include="Resources\Images\academiadoze.png" />
+	<MauiIcon Include="Resources\Images\academiadoze.png">
+	  <Link>ApplicationIcon\appicon.png</Link>
+	</MauiIcon>
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +43,9 @@
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Views\MatriculaListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\MatriculaPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>

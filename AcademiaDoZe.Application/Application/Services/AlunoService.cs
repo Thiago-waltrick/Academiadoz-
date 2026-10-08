@@ -62,7 +62,7 @@ namespace AcademiaDoZe.Application.Services
             // DTO does not carry número/complemento; use safe defaults to satisfy domain Endereco.Criar requirements
             var endereco = Domain.ValueObjects.Endereco.Criar(logradouro!, "S/N", string.Empty).Value;
 
-            var res = Aluno.Criar(dto.Id, dto.Nome, cpfVo, emailVo, dto.DataNascimento, telVo!, endereco);
+            var res = Aluno.Criar(dto.Id, dto.Nome, cpfVo, emailVo, dto.DataNascimento, telVo!, endereco, dto.FotoConteudo);
             if (res.IsFailure) throw new System.InvalidOperationException("Falha ao criar Aluno: " + string.Join(',', res.Notifications));
 
             _repo.Add(res.Value);
@@ -87,7 +87,7 @@ namespace AcademiaDoZe.Application.Services
             }
             var endereco = Domain.ValueObjects.Endereco.Criar(logradouro2!, "S/N", string.Empty).Value;
 
-            var res = Aluno.Criar(dto.Id, dto.Nome, cpfVo, emailVo, dto.DataNascimento, telVo!, endereco);
+            var res = Aluno.Criar(dto.Id, dto.Nome, cpfVo, emailVo, dto.DataNascimento, telVo!, endereco, dto.FotoConteudo);
             if (res.IsFailure) throw new System.InvalidOperationException("Falha ao atualizar Aluno: " + string.Join(',', res.Notifications));
 
             _repo.Update(res.Value);
