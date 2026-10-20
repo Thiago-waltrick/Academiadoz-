@@ -80,28 +80,29 @@ namespace AcademiaDoZe.Infrastructure.Repositories
         public void Update(Aluno entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-            var sql = "UPDATE dbo.tb_aluno SET data_nascimento = @data_nascimento, cpf = @cpf, email = @email, telefone = @telefone, end_numero = @end_numero, end_complemento = @end_complemento, logradouro_nome = @logradouro_nome, logradouro_bairro = @logradouro_bairro, logradouro_cidade = @logradouro_cidade, logradouro_estado = @logradouro_estado, logradouro_cep = @logradouro_cep, foto_conteudo = @foto_conteudo WHERE Id = @id";
+            var sql = "UPDATE dbo.tb_aluno SET nome = @nome, data_nascimento = @data_nascimento, cpf = @cpf, email = @email, telefone = @telefone, end_numero = @end_numero, end_complemento = @end_complemento, logradouro_nome = @logradouro_nome, logradouro_bairro = @logradouro_bairro, logradouro_cidade = @logradouro_cidade, logradouro_estado = @logradouro_estado, logradouro_cep = @logradouro_cep, foto_conteudo = @foto_conteudo WHERE Id = @id";
 
-            var p1 = _provider.CreateParameter("@data_nascimento", entity.DataNascimento == default ? (object)DBNull.Value : entity.DataNascimento);
-            var p2 = _provider.CreateParameter("@cpf", entity.Cpf?.Valor ?? (object)DBNull.Value);
-            var p3 = _provider.CreateParameter("@email", entity.Email?.Endereco ?? (object)DBNull.Value);
-            var p4 = _provider.CreateParameter("@telefone", entity.Telefone?.Numero ?? (object)DBNull.Value);
+            var p1 = _provider.CreateParameter("@nome", entity.Nome);
+            var p2 = _provider.CreateParameter("@data_nascimento", entity.DataNascimento == default ? (object)DBNull.Value : entity.DataNascimento);
+            var p3 = _provider.CreateParameter("@cpf", entity.Cpf?.Valor ?? (object)DBNull.Value);
+            var p4 = _provider.CreateParameter("@email", entity.Email?.Endereco ?? (object)DBNull.Value);
+            var p5 = _provider.CreateParameter("@telefone", entity.Telefone?.Numero ?? (object)DBNull.Value);
 
             var numero = entity.Endereco?.Numero ?? string.Empty;
             var complemento = entity.Endereco?.Complemento ?? string.Empty;
             var log = entity.Endereco?.Logradouro;
 
-            var p5 = _provider.CreateParameter("@end_numero", numero == null ? (object)DBNull.Value : numero);
-            var p6 = _provider.CreateParameter("@end_complemento", complemento == null ? (object)DBNull.Value : complemento);
-            var p7 = _provider.CreateParameter("@logradouro_nome", log?.Nome ?? (object)DBNull.Value);
-            var p8 = _provider.CreateParameter("@logradouro_bairro", log?.Bairro ?? (object)DBNull.Value);
-            var p9 = _provider.CreateParameter("@logradouro_cidade", log?.Cidade ?? (object)DBNull.Value);
-            var p10 = _provider.CreateParameter("@logradouro_estado", log?.Estado ?? (object)DBNull.Value);
-            var p11 = _provider.CreateParameter("@logradouro_cep", log?.Cep?.Codigo ?? (object)DBNull.Value);
-            var p12 = _provider.CreateParameter("@id", entity.Id);
-            var p13 = _provider.CreateParameter("@foto_conteudo", entity.FotoConteudo ?? (object)DBNull.Value);
+            var p6 = _provider.CreateParameter("@end_numero", numero == null ? (object)DBNull.Value : numero);
+            var p7 = _provider.CreateParameter("@end_complemento", complemento == null ? (object)DBNull.Value : complemento);
+            var p8 = _provider.CreateParameter("@logradouro_nome", log?.Nome ?? (object)DBNull.Value);
+            var p9 = _provider.CreateParameter("@logradouro_bairro", log?.Bairro ?? (object)DBNull.Value);
+            var p10 = _provider.CreateParameter("@logradouro_cidade", log?.Cidade ?? (object)DBNull.Value);
+            var p11 = _provider.CreateParameter("@logradouro_estado", log?.Estado ?? (object)DBNull.Value);
+            var p12 = _provider.CreateParameter("@logradouro_cep", log?.Cep?.Codigo ?? (object)DBNull.Value);
+            var p13 = _provider.CreateParameter("@id", entity.Id);
+            var p14 = _provider.CreateParameter("@foto_conteudo", entity.FotoConteudo ?? (object)DBNull.Value);
 
-            ExecuteNonQuery(sql, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);
+            ExecuteNonQuery(sql, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14);
         }
 
         private Aluno Map(DbDataReader r)

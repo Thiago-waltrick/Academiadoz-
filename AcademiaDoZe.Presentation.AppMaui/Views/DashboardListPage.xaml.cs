@@ -1,6 +1,6 @@
 using System;
 using AcademiaDoZe.Presentation.AppMaui.ViewModels;
-using AcademiaDoZe.Presentation.AppMaui.Services;
+using ThemeToggleOverlayService = AcademiaDoZe.Presentation.AppMaui.Services.ThemeToggleOverlay;
 using Microsoft.Maui.Controls;
 
 namespace AcademiaDoZe.Presentation.AppMaui.Views
@@ -14,7 +14,7 @@ namespace AcademiaDoZe.Presentation.AppMaui.Views
             InitializeComponent();
             _viewModel = viewModel;
             BindingContext = viewModel;
-            ThemeToggleOverlay.Attach(this);
+            ThemeToggleOverlayService.Attach(this);
         }
 
         protected override async void OnAppearing()

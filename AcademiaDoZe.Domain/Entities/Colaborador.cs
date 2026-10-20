@@ -12,16 +12,18 @@ namespace AcademiaDoZe.Domain.Entities
         public ColaboradorTipo Tipo { get; private set; }
         public ColaboradorVinculo Vinculo { get; private set; }
         public DateTime DataAdmissao { get; private set; }
+        public byte[]? FotoConteudo { get; private set; }
 
-        private Colaborador(int id, string nome, Cpf cpf, Email email, DateTime dataNascimento, Telefone telefone, Endereco endereco, ColaboradorTipo tipo, ColaboradorVinculo vinculo, DateTime dataAdmissao)
+        private Colaborador(int id, string nome, Cpf cpf, Email email, DateTime dataNascimento, Telefone telefone, Endereco endereco, ColaboradorTipo tipo, ColaboradorVinculo vinculo, DateTime dataAdmissao, byte[]? fotoConteudo)
             : base(id, nome, cpf, email, dataNascimento, telefone, endereco)
         {
             Tipo = tipo;
             Vinculo = vinculo;
             DataAdmissao = dataAdmissao;
+            FotoConteudo = fotoConteudo;
         }
 
-        public static Result<Colaborador> Criar(int id, string nome, Cpf cpf, Email email, DateTime dataNascimento, Telefone telefone, Endereco endereco, ColaboradorTipo tipo, ColaboradorVinculo vinculo, DateTime dataAdmissao)
+        public static Result<Colaborador> Criar(int id, string nome, Cpf cpf, Email email, DateTime dataNascimento, Telefone telefone, Endereco endereco, ColaboradorTipo tipo, ColaboradorVinculo vinculo, DateTime dataAdmissao, byte[]? fotoConteudo = null)
         {
             var notifications = new List<Notification>();
             if (string.IsNullOrWhiteSpace(nome)) notifications.Add(new Notification(nameof(nome), "Nome é obrigatório"));
@@ -35,7 +37,7 @@ namespace AcademiaDoZe.Domain.Entities
 
             if (notifications.Count > 0) return Result<Colaborador>.Failure(notifications);
 
-            var colaborador = new Colaborador(id, nome.Trim(), cpf, email, dataNascimento, telefone, endereco, tipo, vinculo, dataAdmissao);
+            var colaborador = new Colaborador(id, nome.Trim(), cpf, email, dataNascimento, telefone, endereco, tipo, vinculo, dataAdmissao, fotoConteudo);
             return Result<Colaborador>.Success(colaborador);
         }
 

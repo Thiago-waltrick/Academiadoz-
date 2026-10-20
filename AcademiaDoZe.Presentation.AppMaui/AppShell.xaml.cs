@@ -16,6 +16,8 @@ namespace AcademiaDoZe.Presentation.AppMaui
             LogradourosShellContent.Content = services.GetRequiredService<LogradouroListPage>();
             TreinoShellContent.Content = services.GetRequiredService<TreinoExecucaoPage>();
             MatriculasShellContent.Content = services.GetRequiredService<MatriculaListPage>();
+            ColaboradoresShellContent.Content = services.GetRequiredService<ColaboradorListPage>();
+            AlunosShellContent.Content = services.GetRequiredService<AlunoListPage>();
             ProfileShellContent.Content = services.GetRequiredService<ProfilePage>();
             ConfigShellContent.Content = services.GetRequiredService<ConfigPage>();
         }

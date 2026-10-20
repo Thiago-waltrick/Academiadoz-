@@ -1,5 +1,5 @@
 using AcademiaDoZe.Presentation.AppMaui.ViewModels;
-using AcademiaDoZe.Presentation.AppMaui.Services;
+using ThemeToggleOverlayService = AcademiaDoZe.Presentation.AppMaui.Services.ThemeToggleOverlay;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Controls;
 
@@ -14,7 +14,7 @@ namespace AcademiaDoZe.Presentation.AppMaui.Views
             InitializeComponent();
             _services = services;
             BindingContext = viewModel;
-            ThemeToggleOverlay.Attach(this);
+            ThemeToggleOverlayService.Attach(this);
             viewModel.ConnectionSucceeded += OnConnectionSucceeded;
         }
 

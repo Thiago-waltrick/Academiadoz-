@@ -69,9 +69,35 @@ BEGIN
         vinculo INT NULL,
         cpf VARCHAR(11) NULL,
         email NVARCHAR(200) NULL,
-        telefone VARCHAR(20) NULL
+        telefone VARCHAR(20) NULL,
+        end_numero NVARCHAR(20) NULL,
+        end_complemento NVARCHAR(200) NULL,
+        logradouro_nome NVARCHAR(200) NULL,
+        logradouro_bairro NVARCHAR(150) NULL,
+        logradouro_cidade NVARCHAR(100) NULL,
+        logradouro_estado NVARCHAR(2) NULL,
+        logradouro_cep VARCHAR(8) NULL,
+        foto_conteudo VARBINARY(MAX) NULL
     );
 END
+GO
+
+IF COL_LENGTH('dbo.tb_colaborador', 'foto_conteudo') IS NULL
+    ALTER TABLE dbo.tb_colaborador ADD foto_conteudo VARBINARY(MAX) NULL;
+IF COL_LENGTH('dbo.tb_colaborador', 'end_numero') IS NULL
+    ALTER TABLE dbo.tb_colaborador ADD end_numero NVARCHAR(20) NULL;
+IF COL_LENGTH('dbo.tb_colaborador', 'end_complemento') IS NULL
+    ALTER TABLE dbo.tb_colaborador ADD end_complemento NVARCHAR(200) NULL;
+IF COL_LENGTH('dbo.tb_colaborador', 'logradouro_nome') IS NULL
+    ALTER TABLE dbo.tb_colaborador ADD logradouro_nome NVARCHAR(200) NULL;
+IF COL_LENGTH('dbo.tb_colaborador', 'logradouro_bairro') IS NULL
+    ALTER TABLE dbo.tb_colaborador ADD logradouro_bairro NVARCHAR(150) NULL;
+IF COL_LENGTH('dbo.tb_colaborador', 'logradouro_cidade') IS NULL
+    ALTER TABLE dbo.tb_colaborador ADD logradouro_cidade NVARCHAR(100) NULL;
+IF COL_LENGTH('dbo.tb_colaborador', 'logradouro_estado') IS NULL
+    ALTER TABLE dbo.tb_colaborador ADD logradouro_estado NVARCHAR(2) NULL;
+IF COL_LENGTH('dbo.tb_colaborador', 'logradouro_cep') IS NULL
+    ALTER TABLE dbo.tb_colaborador ADD logradouro_cep VARCHAR(8) NULL;
 GO
 
 IF NOT EXISTS(SELECT 1 FROM sys.indexes WHERE name = 'idx_colaborador_nome' AND object_id = OBJECT_ID('dbo.tb_colaborador'))

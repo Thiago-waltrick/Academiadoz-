@@ -46,6 +46,30 @@ END
 ELSE
 BEGIN
     ;THROW 50002, 'A tabela dbo.tb_aluno não existe no banco conectado.', 1;
+END;
+
+IF EXISTS (SELECT 1 FROM sys.tables WHERE schema_id = SCHEMA_ID(N'dbo') AND name = N'tb_colaborador')
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.tb_colaborador') AND name = N'foto_conteudo')
+        ALTER TABLE dbo.tb_colaborador ADD foto_conteudo VARBINARY(MAX) NULL;
+    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.tb_colaborador') AND name = N'end_numero')
+        ALTER TABLE dbo.tb_colaborador ADD end_numero NVARCHAR(20) NULL;
+    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.tb_colaborador') AND name = N'end_complemento')
+        ALTER TABLE dbo.tb_colaborador ADD end_complemento NVARCHAR(200) NULL;
+    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.tb_colaborador') AND name = N'logradouro_nome')
+        ALTER TABLE dbo.tb_colaborador ADD logradouro_nome NVARCHAR(200) NULL;
+    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.tb_colaborador') AND name = N'logradouro_bairro')
+        ALTER TABLE dbo.tb_colaborador ADD logradouro_bairro NVARCHAR(150) NULL;
+    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.tb_colaborador') AND name = N'logradouro_cidade')
+        ALTER TABLE dbo.tb_colaborador ADD logradouro_cidade NVARCHAR(100) NULL;
+    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.tb_colaborador') AND name = N'logradouro_estado')
+        ALTER TABLE dbo.tb_colaborador ADD logradouro_estado NVARCHAR(2) NULL;
+    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.tb_colaborador') AND name = N'logradouro_cep')
+        ALTER TABLE dbo.tb_colaborador ADD logradouro_cep VARCHAR(8) NULL;
+END
+ELSE
+BEGIN
+    ;THROW 50003, 'A tabela dbo.tb_colaborador não existe no banco conectado.', 1;
 END;";
 
             return provider.ExecuteNonQueryAsync(sql);

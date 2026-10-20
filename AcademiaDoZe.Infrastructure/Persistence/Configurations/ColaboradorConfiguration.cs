@@ -16,6 +16,7 @@ namespace AcademiaDoZe.Infrastructure.Persistence.Configurations
             builder.Property(c => c.Nome).HasColumnName("nome").IsRequired().HasMaxLength(200);
             builder.Property(c => c.DataAdmissao).HasColumnName("data_admissao");
             builder.Property(c => c.DataNascimento).HasColumnName("data_nascimento");
+            builder.Property(c => c.FotoConteudo).HasColumnName("foto_conteudo");
 
             builder.Property<int>("Tipo").HasColumnName("tipo");
             builder.Property<int>("Vinculo").HasColumnName("vinculo");

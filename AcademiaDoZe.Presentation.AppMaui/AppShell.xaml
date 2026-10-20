@@ -15,6 +15,20 @@
     <ShellContent x:Name="DashboardShellContent" Title="Dashboard" Route="dashboard" />
   </FlyoutItem>
 
+  <FlyoutItem Title="👥 Colaboradores" SemanticProperties.Description="Consultar e gerenciar colaboradores">
+    <FlyoutItem.Icon>
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe7ef;" Size="32" Color="#A78BFA" />
+    </FlyoutItem.Icon>
+    <ShellContent x:Name="ColaboradoresShellContent" Title="Colaboradores" Route="colaboradores" />
+  </FlyoutItem>
+
+  <FlyoutItem Title="🎒 Alunos" SemanticProperties.Description="Consultar e gerenciar alunos">
+    <FlyoutItem.Icon>
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe80c;" Size="32" Color="#C084FC" />
+    </FlyoutItem.Icon>
+    <ShellContent x:Name="AlunosShellContent" Title="Alunos" Route="alunos" />
+  </FlyoutItem>
+
   <FlyoutItem Title="📍 Logradouros" SemanticProperties.Description="Consultar e gerenciar logradouros">
     <FlyoutItem.Icon>
       <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe55b;" Size="32" Color="#8B5CF6" />

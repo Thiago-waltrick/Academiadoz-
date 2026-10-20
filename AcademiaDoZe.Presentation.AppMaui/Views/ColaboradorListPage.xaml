@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:AcademiaDoZe.Presentation.AppMaui.Converters"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.ColaboradorListPage"
+             x:Name="PageRoot"
+             Title="Colaboradores">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Resources/Styles/Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <converters:FotoToImageSourceConverter x:Key="FotoToImageSourceConverter" />
+      <converters:EnumDisplayConverter x:Key="EnumDisplayConverter" />
+      <DataTemplate x:Key="ColaboradorItemTemplate">
+        <Border Style="{StaticResource CardBorder}" Margin="4">
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+            <Border WidthRequest="{OnIdiom Phone=64, Tablet=80, Desktop=96, TV=112}"
+                    HeightRequest="{OnIdiom Phone=64, Tablet=80, Desktop=96, TV=112}"
+                    Stroke="#8B5CF6" StrokeThickness="1" StrokeShape="Ellipse" Padding="0"
+                    VerticalOptions="Center">
+              <Image Source="{Binding FotoConteudo, Converter={StaticResource FotoToImageSourceConverter}}"
+                     Aspect="AspectFill" />
+            </Border>
+            <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+              <Label Text="{Binding Nome}" FontAttributes="Bold" FontSize="16" />
+              <Label Text="{Binding Cpf, StringFormat='CPF: {0}'}" />
+              <Label Text="{Binding Email, StringFormat='E-mail: {0}'}" LineBreakMode="TailTruncation" />
+              <Label Text="{Binding Tipo, Converter={StaticResource EnumDisplayConverter}, StringFormat='Tipo: {0}'}" />
+              <Label Text="{Binding Vinculo, Converter={StaticResource EnumDisplayConverter}, StringFormat='Vínculo: {0}'}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+              <Button Text="Editar"
+                      Command="{Binding BindingContext.EditColaboradorCommand, Source={x:Reference PageRoot}}"
+                      CommandParameter="{Binding .}">
+                <Button.ImageSource>
+                  <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe3c9;" Size="24" Color="#8B5CF6" />
+                </Button.ImageSource>
+              </Button>
+              <Button Text="Excluir"
+                      Command="{Binding BindingContext.DeleteColaboradorCommand, Source={x:Reference PageRoot}}"
+                      CommandParameter="{Binding .}">
+                <Button.ImageSource>
+                  <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe872;" Size="24" Color="#8B5CF6" />
+                </Button.ImageSource>
+              </Button>
+            </VerticalStackLayout>
+          </Grid>
+        </Border>
+      </DataTemplate>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <Grid Padding="16" RowDefinitions="Auto,Auto,*" RowSpacing="8">
+    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+      <SearchBar Placeholder="Buscar por nome, CPF, e-mail ou vínculo"
+                 Text="{Binding SearchText}"
+                 SearchCommand="{Binding SearchCommand}" />
+      <Button Grid.Column="1" Text="Buscar" Command="{Binding SearchCommand}" />
+    </Grid>
+    <Label Grid.Row="1"
+           Text="{Binding ErrorMessage}"
+           TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}"
+           LineBreakMode="WordWrap" />
+    <RefreshView Grid.Row="2"
+                 IsRefreshing="{Binding IsRefreshing}"
+                 Command="{Binding RefreshCommand}">
+      <CollectionView ItemsSource="{Binding Colaboradores}"
+                      ItemTemplate="{StaticResource ColaboradorItemTemplate}"
+                      SelectionMode="None">
+        <CollectionView.ItemsLayout>
+          <GridItemsLayout Orientation="Vertical"
+                           Span="{OnIdiom Phone=1, Tablet=2, Desktop=3, TV=4}"
+                           VerticalItemSpacing="4" />
+        </CollectionView.ItemsLayout>
+        <CollectionView.EmptyView>
+          <Label Text="Nenhum colaborador encontrado."
+                 HorizontalOptions="Center"
+                 VerticalOptions="Center" />
+        </CollectionView.EmptyView>
+      </CollectionView>
+    </RefreshView>
+    <Button Grid.Row="2"
+            Text="Adicionar colaborador"
+            Command="{Binding AddColaboradorCommand}"
+            HorizontalOptions="End"
+            VerticalOptions="End"
+            Margin="16">
+      <Button.ImageSource>
+        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe145;" Size="28" Color="White" />
+      </Button.ImageSource>
+    </Button>
+  </Grid>
+</ContentPage>

@@ -62,7 +62,7 @@ namespace AcademiaDoZe.Application.Services
             }
             var endereco = Domain.ValueObjects.Endereco.Criar(logradouro!, "S/N", string.Empty).Value;
 
-            var res = Colaborador.Criar(dto.Id, dto.Nome, cpfVo, emailVo, dto.DataNascimento, telVo!, endereco, dto.Tipo.ToDomain(), dto.Vinculo.ToDomain(), dto.DataAdmissao);
+            var res = Colaborador.Criar(dto.Id, dto.Nome, cpfVo, emailVo, dto.DataNascimento, telVo!, endereco, dto.Tipo.ToDomain(), dto.Vinculo.ToDomain(), dto.DataAdmissao, dto.FotoConteudo);
             if (res.IsFailure) throw new System.InvalidOperationException("Falha ao criar Colaborador: " + string.Join(',', res.Notifications));
 
             // Password handling: if DTO had a password field (it doesn't), use PasswordHasher here. Domain currently does not hold password property.
@@ -88,7 +88,7 @@ namespace AcademiaDoZe.Application.Services
             }
             var endereco = Domain.ValueObjects.Endereco.Criar(logradouro2!, "S/N", string.Empty).Value;
 
-            var res = Colaborador.Criar(dto.Id, dto.Nome, cpfVo, emailVo, dto.DataNascimento, telVo!, endereco, dto.Tipo.ToDomain(), dto.Vinculo.ToDomain(), dto.DataAdmissao);
+            var res = Colaborador.Criar(dto.Id, dto.Nome, cpfVo, emailVo, dto.DataNascimento, telVo!, endereco, dto.Tipo.ToDomain(), dto.Vinculo.ToDomain(), dto.DataAdmissao, dto.FotoConteudo);
             if (res.IsFailure) throw new System.InvalidOperationException("Falha ao atualizar Colaborador: " + string.Join(',', res.Notifications));
 
             _repo.Update(res.Value);

@@ -14,8 +14,8 @@ namespace AcademiaDoZe.Application.Mappings
             {
                 Id = src.Id,
                 Nome = src.Nome,
-                Cpf = src.Cpf.ToString(),
-                Email = src.Email.ToString(),
+                Cpf = src.Cpf.Valor,
+                Email = src.Email.Endereco,
                 DataNascimento = src.DataNascimento,
                 Telefone = src.Telefone?.Numero ?? string.Empty,
                 Endereco = src.Endereco?.Logradouro?.ToDto() ?? new Application.DTOs.LogradouroDto(),
