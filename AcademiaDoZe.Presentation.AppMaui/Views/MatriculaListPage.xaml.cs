@@ -1,3 +1,4 @@
+using AcademiaDoZe.Application.DTOs;
 using AcademiaDoZe.Presentation.AppMaui.ViewModels;
 using Microsoft.Maui.Controls;
 
@@ -18,6 +19,14 @@ namespace AcademiaDoZe.Presentation.AppMaui.Views
         {
             base.OnAppearing();
             await _viewModel.LoadMatriculasCommand.ExecuteAsync(null);
+        }
+
+        private async void OnMenuClicked(object? sender, EventArgs e)
+        {
+            if (sender is not Button { BindingContext: MatriculaDto matricula }) return;
+            var action = await DisplayActionSheetAsync("Matrícula", "Cancelar", null, "Editar", "Excluir");
+            if (action == "Editar") await _viewModel.EditMatriculaCommand.ExecuteAsync(matricula);
+            else if (action == "Excluir") await _viewModel.DeleteMatriculaCommand.ExecuteAsync(matricula);
         }
     }
 }

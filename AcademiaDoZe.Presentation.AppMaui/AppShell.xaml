@@ -45,7 +45,7 @@
 
   <FlyoutItem Title="🎓 Matrículas" SemanticProperties.Description="Consultar e gerenciar matrículas">
     <FlyoutItem.Icon>
-      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe85d;" Size="32" Color="#7C3AED" />
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xefec;" Size="32" Color="#7C3AED" />
     </FlyoutItem.Icon>
     <ShellContent x:Name="MatriculasShellContent" Title="Matrículas" Route="matriculas" />
   </FlyoutItem>

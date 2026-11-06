@@ -4,13 +4,17 @@ using System.Windows.Input;
 using AcademiaDoZe.Application.DTOs;
 using AcademiaDoZe.Application.Enums;
 using AcademiaDoZe.Application.Interfaces;
+using AcademiaDoZe.Domain.Common;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Media;
 
 namespace AcademiaDoZe.Presentation.AppMaui.ViewModels;
 
+[QueryProperty(nameof(MatriculaId), "Id")]
 public partial class MatriculaViewModel : BaseViewModel
 {
     private readonly IMatriculaService _matriculaService;
@@ -28,6 +32,7 @@ public partial class MatriculaViewModel : BaseViewModel
     private ArquivoDto? _laudoMedico;
     private string _errorMessage = string.Empty;
     private string _laudoStatus = "Nenhum arquivo anexado";
+    private AppMatriculaRestricoes _outrasRestricoes;
 
     public int MatriculaId
     {
@@ -48,6 +53,9 @@ public partial class MatriculaViewModel : BaseViewModel
             FotoAluno = value?.FotoConteudo is { Length: > 0 } foto
                 ? ImageSource.FromStream(() => new MemoryStream(foto))
                 : null;
+            OnPropertyChanged(nameof(HasAluno));
+            OnPropertyChanged(nameof(SemAluno));
+            NotifyLaudoState();
         }
     }
     public ImageSource? FotoAluno { get => _fotoAluno; private set => SetProperty(ref _fotoAluno, value); }
@@ -57,7 +65,7 @@ public partial class MatriculaViewModel : BaseViewModel
         set
         {
             if (SetProperty(ref _planoSelecionado, value))
-                CalcularDataFim();
+                CalculateFimFromPlanoAndInicio();
         }
     }
     public DateTime DataInicio
@@ -66,7 +74,7 @@ public partial class MatriculaViewModel : BaseViewModel
         set
         {
             if (SetProperty(ref _dataInicio, value))
-                CalcularDataFim();
+                CalculateFimFromPlanoAndInicio();
         }
     }
     public DateTime DataFim { get => _dataFim; private set => SetProperty(ref _dataFim, value); }
@@ -78,7 +86,10 @@ public partial class MatriculaViewModel : BaseViewModel
         set
         {
             if (SetProperty(ref _laudoMedico, value))
+            {
                 LaudoStatus = value?.Nome ?? "Nenhum arquivo anexado";
+                NotifyLaudoState();
+            }
         }
     }
     public string ErrorMessage { get => _errorMessage; set => SetProperty(ref _errorMessage, value); }
@@ -93,10 +104,19 @@ public partial class MatriculaViewModel : BaseViewModel
 
     public IReadOnlyList<AppMatriculaPlano> Planos { get; } = Enum.GetValues<AppMatriculaPlano>();
     public ObservableCollection<RestricaoOpcao> RestricoesDisponiveis { get; } = new();
-    public AppMatriculaRestricoes Restricoes => RestricoesDisponiveis
+    public ObservableCollection<RestricaoSelectable> RestricoesMulti { get; } = new();
+    public AppMatriculaRestricoes Restricoes => RestricoesMulti
         .Where(item => item.IsSelected)
-        .Aggregate(AppMatriculaRestricoes.Nenhuma, (flags, item) => flags | item.Valor);
+        .Aggregate(_outrasRestricoes, (flags, item) => flags | item.Value);
     public bool IsEditing => MatriculaId > 0;
+    public bool HasAluno => AlunoSelecionado is not null;
+    public bool SemAluno => !HasAluno;
+    public bool IsMenor16 => AlunoSelecionado is { DataNascimento: var data } && data != default && data.Date > DateTime.Today.AddYears(-16);
+    public bool HasRestricoes => Restricoes != AppMatriculaRestricoes.Nenhuma;
+    public bool ExigeLaudo => IsMenor16 || HasRestricoes;
+    public bool HasLaudo => LaudoMedico?.Conteudo is { Length: > 0 };
+    public bool LaudoPendente => ExigeLaudo && !HasLaudo;
+    public bool LaudoOpcional => !ExigeLaudo && !HasLaudo;
 
     public MatriculaViewModel(IMatriculaService matriculaService, IAlunoService alunoService)
     {
@@ -127,7 +147,8 @@ public partial class MatriculaViewModel : BaseViewModel
             RestricoesDisponiveis.Add(new RestricaoOpcao(item.Item1, item.Item2, OnRestricaoChanged));
         }
 
-        CalcularDataFim();
+        BuildRestricoesMulti();
+        CalculateFimFromPlanoAndInicio();
     }
 
     public async Task LoadAsync(int? id = null)
@@ -152,8 +173,7 @@ public partial class MatriculaViewModel : BaseViewModel
             LaudoMedico = matricula.LaudoMedico;
             LaudoStatus = LaudoMedico?.Nome ?? "Nenhum arquivo anexado";
 
-            foreach (var item in RestricoesDisponiveis)
-                item.IsSelected = (matricula.Restricoes & item.Valor) == item.Valor;
+            SyncSelectionFromFlags(matricula.Restricoes);
         }
         catch (Exception ex)
         {
@@ -190,11 +210,30 @@ public partial class MatriculaViewModel : BaseViewModel
         }
     }
 
-    private async Task AttachLaudoAsync()
+    [RelayCommand]
+    public async Task SelecionarFotoAsync()
     {
         try
         {
-            var file = await FilePicker.Default.PickAsync(new PickOptions { PickerTitle = "Selecione o laudo médico" });
+            var action = await Shell.Current.DisplayActionSheetAsync("Laudo médico", "Cancelar", null, "Galeria", "Câmera", "Remover laudo");
+            if (action == "Remover laudo") { RemoveLaudo(); return; }
+            FileResult? file = null;
+            if (action == "Galeria")
+                file = await FilePicker.Default.PickAsync(new PickOptions { PickerTitle = "Selecione o laudo médico" });
+            else if (action == "Câmera")
+            {
+                if (!MediaPicker.Default.IsCaptureSupported)
+                {
+                    ErrorMessage = "A captura de fotos não está disponível neste dispositivo.";
+                    return;
+                }
+                if (await Permissions.RequestAsync<Permissions.Camera>() != PermissionStatus.Granted)
+                {
+                    ErrorMessage = "A permissão da câmera é necessária para fotografar o laudo.";
+                    return;
+                }
+                file = await MediaPicker.Default.CapturePhotoAsync();
+            }
             if (file is null) return;
 
             await using var stream = await file.OpenReadAsync();
@@ -210,11 +249,14 @@ public partial class MatriculaViewModel : BaseViewModel
             LaudoStatus = file.FileName;
             ErrorMessage = string.Empty;
         }
+
         catch (Exception ex)
         {
             ErrorMessage = $"Não foi possível anexar o laudo: {ex.GetBaseException().Message}";
         }
     }
+
+    private Task AttachLaudoAsync() => SelecionarFotoAsync();
 
     private void RemoveLaudo()
     {
@@ -222,12 +264,14 @@ public partial class MatriculaViewModel : BaseViewModel
         LaudoStatus = "Nenhum arquivo anexado";
     }
 
-    private async Task SaveAsync()
+    [RelayCommand]
+    public async Task SaveMatriculaAsync()
     {
         ErrorMessage = string.Empty;
-        if (AlunoSelecionado is null || AlunoSelecionado.Id <= 0)
+        var notifications = await ValidateMatriculaAsync();
+        if (notifications.Count > 0)
         {
-            ErrorMessage = "Selecione um aluno válido antes de salvar a matrícula.";
+            ErrorMessage = string.Join(Environment.NewLine, notifications.Select(n => n.Mensagem));
             return;
         }
 
@@ -237,7 +281,7 @@ public partial class MatriculaViewModel : BaseViewModel
             var dto = new MatriculaDto
             {
                 Id = MatriculaId,
-                AlunoId = AlunoSelecionado.Id,
+                AlunoId = AlunoSelecionado!.Id,
                 Aluno = AlunoSelecionado,
                 Plano = PlanoSelecionado,
                 DataInicio = DataInicio.Date,
@@ -255,6 +299,7 @@ public partial class MatriculaViewModel : BaseViewModel
 
             await Shell.Current.GoToAsync("..");
         }
+
         catch (Exception ex)
         {
             ErrorMessage = $"Não foi possível salvar a matrícula: {ex.GetBaseException().Message}";
@@ -263,6 +308,20 @@ public partial class MatriculaViewModel : BaseViewModel
         {
             IsBusy = false;
         }
+    }
+
+    private Task SaveAsync() => SaveMatriculaAsync();
+
+    public Task<IReadOnlyList<Notification>> ValidateMatriculaAsync()
+    {
+        var notifications = new List<Notification>();
+        if (AlunoSelecionado is null || AlunoSelecionado.Id <= 0)
+            notifications.Add(new Notification(nameof(AlunoSelecionado), "Selecione um aluno válido antes de salvar a matrícula."));
+        else if (AlunoSelecionado.DataNascimento == default || AlunoSelecionado.DataNascimento.Date > DateTime.Today)
+            notifications.Add(new Notification(nameof(AlunoSelecionado), "A data de nascimento do aluno deve ser válida para verificar a necessidade de laudo."));
+        if (LaudoPendente)
+            notifications.Add(new Notification(nameof(LaudoMedico), "O laudo médico é obrigatório para menores de 16 anos ou alunos com restrições."));
+        return Task.FromResult<IReadOnlyList<Notification>>(notifications);
     }
 
     private Task CancelAsync() => Shell.Current.GoToAsync("..");
@@ -278,12 +337,11 @@ public partial class MatriculaViewModel : BaseViewModel
         ObservacoesRestricao = string.Empty;
         LaudoMedico = null;
         LaudoStatus = "Nenhum arquivo anexado";
-        foreach (var item in RestricoesDisponiveis)
-            item.IsSelected = false;
+        SyncSelectionFromFlags(AppMatriculaRestricoes.Nenhuma);
         ErrorMessage = string.Empty;
     }
 
-    private void CalcularDataFim()
+    public void CalculateFimFromPlanoAndInicio()
     {
         DataFim = PlanoSelecionado switch
         {
@@ -296,6 +354,50 @@ public partial class MatriculaViewModel : BaseViewModel
     }
 
     private void OnRestricaoChanged(RestricaoOpcao _) => OnPropertyChanged(nameof(Restricoes));
+
+    public void BuildRestricoesMulti()
+    {
+        foreach (var item in RestricoesMulti)
+            item.PropertyChanged -= OnSelectionChanged;
+        RestricoesMulti.Clear();
+        foreach (var value in Enum.GetValues<AppMatriculaRestricoes>().Where(value => value != AppMatriculaRestricoes.Nenhuma))
+        {
+            var item = new RestricaoSelectable { Value = value };
+            item.PropertyChanged += OnSelectionChanged;
+            RestricoesMulti.Add(item);
+        }
+        RecomputeRestricoesFlags();
+    }
+
+    public void SyncSelectionFromFlags(AppMatriculaRestricoes flags)
+    {
+        var known = RestricoesMulti.Aggregate(AppMatriculaRestricoes.Nenhuma, (current, item) => current | item.Value);
+        _outrasRestricoes = flags & ~known;
+        foreach (var item in RestricoesMulti)
+            item.IsSelected = (flags & item.Value) == item.Value;
+        RecomputeRestricoesFlags();
+    }
+
+    public void RecomputeRestricoesFlags()
+    {
+        OnPropertyChanged(nameof(Restricoes));
+        NotifyLaudoState();
+    }
+
+    private void OnSelectionChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(RestricaoSelectable.IsSelected)) RecomputeRestricoesFlags();
+    }
+
+    private void NotifyLaudoState()
+    {
+        OnPropertyChanged(nameof(IsMenor16));
+        OnPropertyChanged(nameof(HasRestricoes));
+        OnPropertyChanged(nameof(ExigeLaudo));
+        OnPropertyChanged(nameof(HasLaudo));
+        OnPropertyChanged(nameof(LaudoPendente));
+        OnPropertyChanged(nameof(LaudoOpcional));
+    }
 }
 
 public sealed class RestricaoOpcao : ObservableObject

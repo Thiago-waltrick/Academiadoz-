@@ -32,8 +32,11 @@ namespace AcademiaDoZe.Application.Services
 
         public Task<MatriculaDto> ObterPorIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            var ent = _repo.GetById(id);
-            return Task.FromResult(ent.ToDto());
+            return Task.Run(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return _repo.GetById(id).ToDto();
+            }, cancellationToken);
         }
 
         public Task<IReadOnlyCollection<MatriculaDto>> ObterTodasAsync(CancellationToken cancellationToken = default)
@@ -43,6 +46,25 @@ namespace AcademiaDoZe.Application.Services
                 cancellationToken.ThrowIfCancellationRequested();
                 var list = _repo.GetAll();
                 return (IReadOnlyCollection<MatriculaDto>)list.Select(m => m.ToDto()).ToList().AsReadOnly();
+            }, cancellationToken);
+        }
+
+        public Task<IReadOnlyCollection<MatriculaDto>> ObterAtivasAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.Run<IReadOnlyCollection<MatriculaDto>>(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return _repo.ObterAtivas().Select(m => m.ToDto()).ToList().AsReadOnly();
+            }, cancellationToken);
+        }
+
+        public Task<IReadOnlyCollection<MatriculaDto>> ObterVencendoEmDiasAsync(int dias, CancellationToken cancellationToken = default)
+        {
+            if (dias < 0) throw new System.ArgumentOutOfRangeException(nameof(dias));
+            return Task.Run<IReadOnlyCollection<MatriculaDto>>(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return _repo.ObterVencendoEmDias(dias).Select(m => m.ToDto()).ToList().AsReadOnly();
             }, cancellationToken);
         }
 

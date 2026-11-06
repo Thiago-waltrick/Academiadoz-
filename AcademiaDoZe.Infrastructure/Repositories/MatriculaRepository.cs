@@ -93,14 +93,17 @@ namespace AcademiaDoZe.Infrastructure.Repositories
             if (string.IsNullOrWhiteSpace(termo)) return ObterTodos();
 
             var filtro = termo.Trim();
-            var cpf = new string(filtro.Where(char.IsDigit).ToArray());
+            var cpf = filtro.All(c => char.IsDigit(c) || c == '.' || c == '-' || char.IsWhiteSpace(c))
+                ? new string(filtro.Where(char.IsDigit).ToArray())
+                : string.Empty;
+            var termoLiteral = filtro.Replace("~", "~~").Replace("%", "~%").Replace("_", "~_").Replace("[", "~[");
             const string sql = "SELECT m.Id, m.aluno_id, m.plano, m.data_inicio, m.data_fim, m.objetivo, m.restricoes, " +
                 "m.obs_restricao, m.laudo_nome, m.laudo_content_type, m.laudo_conteudo, a.nome, a.cpf, a.data_nascimento, a.foto_conteudo " +
                 "FROM dbo.tb_matricula m INNER JOIN dbo.tb_aluno a ON a.Id = m.aluno_id " +
-                "WHERE a.nome LIKE @termo OR a.cpf LIKE @cpf OR CONVERT(VARCHAR(20), m.Id) LIKE @termo ORDER BY m.Id DESC";
+                "WHERE a.nome LIKE @termo ESCAPE '~' OR (@cpf IS NOT NULL AND a.cpf LIKE @cpf) OR CONVERT(VARCHAR(20), m.Id) LIKE @termo ESCAPE '~' ORDER BY m.Id DESC";
             var list = Query(sql, Map,
-                _provider.CreateParameter("@termo", $"%{filtro}%"),
-                _provider.CreateParameter("@cpf", $"%{cpf}%"));
+                _provider.CreateParameter("@termo", $"%{termoLiteral}%"),
+                _provider.CreateParameter("@cpf", cpf.Length > 0 ? $"%{cpf}%" : (object)DBNull.Value));
             return list.AsReadOnly();
         }
 

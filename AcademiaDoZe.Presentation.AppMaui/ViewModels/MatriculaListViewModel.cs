@@ -12,6 +12,12 @@ public partial class MatriculaListViewModel : BaseViewModel
 {
     private readonly IMatriculaService _matriculaService;
     private string _searchText = string.Empty;
+    private CancellationTokenSource? _searchCancellation;
+
+    [ObservableProperty]
+    private string _selectedFilter = "Ativas";
+
+    public IReadOnlyList<string> FilterTypes { get; } = new[] { "Id", "Id Aluno", "Ativas", "Vencendo em dias", "Todas" };
 
     public ObservableCollection<MatriculaDto> Matriculas { get; } = new();
     public string SearchText
@@ -40,53 +46,98 @@ public partial class MatriculaListViewModel : BaseViewModel
     [RelayCommand]
     public async Task LoadMatriculasAsync()
     {
-        if (IsBusy)
-            return;
+        await SearchMatriculasAsync();
+    }
 
+    [RelayCommand]
+    public async Task RefreshAsync() => await SearchMatriculasAsync();
+
+    [RelayCommand(AllowConcurrentExecutions = true)]
+    public async Task SearchMatriculasAsync()
+    {
+        _searchCancellation?.Cancel();
+        var source = new CancellationTokenSource();
+        _searchCancellation = source;
+        var token = source.Token;
         IsBusy = true;
-        IsRefreshing = true;
         LoadErrorMessage = string.Empty;
-
         try
         {
-            var items = await _matriculaService.ObterTodasAsync();
+            var filter = SelectedFilter;
+            var input = SearchText?.Trim() ?? string.Empty;
+            IReadOnlyCollection<MatriculaDto> items;
+            if (filter == "Ativas")
+            {
+                var ativas = await _matriculaService.ObterAtivasAsync(token);
+                items = string.IsNullOrEmpty(input)
+                    ? ativas
+                    : ativas.Where(item => CorrespondeAoTermo(item, input)).ToArray();
+            }
+            else if (filter == "Todas")
+                items = await _matriculaService.BuscarAsync(input, token);
+            else if (!int.TryParse(input, out var number) || number < 0 || (filter != "Vencendo em dias" && number == 0))
+                throw new ArgumentException("Informe um número válido para o filtro selecionado.");
+            else if (filter == "Id")
+                items = new[] { await _matriculaService.ObterPorIdAsync(number, token) };
+            else if (filter == "Id Aluno")
+                items = await _matriculaService.ObterPorAlunoIdAsync(number, token);
+            else
+                items = await _matriculaService.ObterVencendoEmDiasAsync(number, token);
+
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                Matriculas.Clear();
-                foreach (var item in items)
-                    Matriculas.Add(item);
+                if (!token.IsCancellationRequested)
+                    ReplaceItems(items);
             });
         }
+        catch (OperationCanceledException) when (token.IsCancellationRequested) { }
         catch (Exception ex)
         {
-            LoadErrorMessage = $"Não foi possível carregar as matrículas: {ex.GetBaseException().Message}";
+            if (!token.IsCancellationRequested)
+            {
+                LoadErrorMessage = $"Não foi possível pesquisar as matrículas: {ex.GetBaseException().Message}";
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    if (!token.IsCancellationRequested) Matriculas.Clear();
+                });
+            }
         }
         finally
         {
-            IsRefreshing = false;
-            IsBusy = false;
+            if (ReferenceEquals(_searchCancellation, source))
+            {
+                _searchCancellation = null;
+                IsBusy = false;
+                IsRefreshing = false;
+            }
+            source.Dispose();
         }
     }
 
-    private async Task SearchAsync()
+    private Task SearchAsync() => SearchMatriculasAsync();
+
+    private static bool CorrespondeAoTermo(MatriculaDto matricula, string termo)
     {
-        if (IsBusy) return;
-        IsBusy = true;
-        LoadErrorMessage = string.Empty;
-        try
-        {
-            var items = await _matriculaService.BuscarAsync(SearchText);
-            await MainThread.InvokeOnMainThreadAsync(() => ReplaceItems(items));
-        }
-        catch (Exception ex)
-        {
-            LoadErrorMessage = $"Não foi possível pesquisar as matrículas: {ex.GetBaseException().Message}";
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        if (matricula.Aluno?.Nome?.Contains(termo, StringComparison.OrdinalIgnoreCase) == true ||
+            matricula.Id.ToString().Contains(termo, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (!termo.All(c => char.IsDigit(c) || c == '.' || c == '-' || char.IsWhiteSpace(c)))
+            return false;
+
+        var digitos = new string(termo.Where(char.IsDigit).ToArray());
+        var cpf = new string((matricula.Aluno?.Cpf ?? string.Empty).Where(char.IsDigit).ToArray());
+        return digitos.Length > 0 && cpf.Contains(digitos, StringComparison.Ordinal);
     }
+
+    [RelayCommand]
+    public Task AddMatriculaAsync() => AddAsync();
+
+    [RelayCommand]
+    public Task EditMatriculaAsync(MatriculaDto? matricula) => EditAsync(matricula);
+
+    [RelayCommand]
+    public Task DeleteMatriculaAsync(MatriculaDto? matricula) => DeleteAsync(matricula);
 
     private Task AddAsync() => Shell.Current.GoToAsync("matricula");
 
@@ -109,8 +160,7 @@ public partial class MatriculaListViewModel : BaseViewModel
         {
             await _matriculaService.RemoverAsync(matricula.Id);
             await Shell.Current.DisplayAlertAsync("Matrícula excluída", "O registro foi removido do SQL Server.", "OK");
-            var items = await _matriculaService.BuscarAsync(SearchText);
-            await MainThread.InvokeOnMainThreadAsync(() => ReplaceItems(items));
+            await SearchMatriculasAsync();
         }
         catch (Exception ex)
         {

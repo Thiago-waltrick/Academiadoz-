@@ -1,7 +1,5 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Maui.Controls;
 
 namespace AcademiaDoZe.Presentation.AppMaui.Converters
@@ -20,23 +18,14 @@ namespace AcademiaDoZe.Presentation.AppMaui.Converters
             if (!enumType.IsEnum) return value.ToString() ?? string.Empty;
 
             var longVal = System.Convert.ToInt64(value);
-            if (longVal == 0) return string.Empty;
+            if (longVal == 0) return ((Enum)value).GetDisplayName();
 
             var names = Enum.GetValues(enumType).Cast<object>()
                 .Where(v => (System.Convert.ToInt64(v) & longVal) != 0)
-                .Select(v => GetDisplayName(enumType, v.ToString()!))
+                .Select(v => ((Enum)v).GetDisplayName())
                 .Where(s => !string.IsNullOrWhiteSpace(s));
 
             return string.Join(", ", names);
-        }
-
-        private string GetDisplayName(Type enumType, string name)
-        {
-            var mem = enumType.GetMember(name).FirstOrDefault();
-            if (mem == null) return name;
-            var disp = mem.GetCustomAttribute<DisplayAttribute>();
-            if (disp != null && !string.IsNullOrEmpty(disp.Name)) return disp.Name;
-            return name;
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)

@@ -8,7 +8,7 @@
       <Label Text="{Binding ErrorMessage}"
              TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}" />
 
-      <Border Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1" Padding="14" StrokeShape="RoundRectangle 12">
+      <Border Style="{StaticResource CardBorder}">
         <VerticalStackLayout Spacing="10">
           <Label Text="Aluno" FontAttributes="Bold" FontSize="18" />
           <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
@@ -17,6 +17,8 @@
                        SearchCommand="{Binding SearchByCpfCommand}" />
             <Button Grid.Column="1" Text="Pesquisar" Command="{Binding SearchByCpfCommand}" />
           </Grid>
+          <Label Text="Selecione um aluno pelo CPF." IsVisible="{Binding SemAluno}" TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}" />
+          <Label Text="Aluno menor de 16 anos: laudo obrigatório." IsVisible="{Binding IsMenor16}" TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}" />
           <Grid ColumnDefinitions="76,*" ColumnSpacing="12">
             <Border WidthRequest="72" HeightRequest="72" Stroke="#8B5CF6" StrokeThickness="2" StrokeShape="Ellipse" Padding="0">
               <Image Source="{Binding FotoAluno}" Aspect="AspectFill" />
@@ -30,42 +32,47 @@
         </VerticalStackLayout>
       </Border>
 
-      <Border Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1" Padding="14" StrokeShape="RoundRectangle 12">
+      <Border Style="{StaticResource CardBorder}">
         <VerticalStackLayout Spacing="10">
           <Label Text="Plano e vigência" FontAttributes="Bold" FontSize="18" />
           <Picker Title="Selecione o plano"
                   ItemsSource="{Binding Planos}"
-                  SelectedItem="{Binding PlanoSelecionado}" />
-          <DatePicker Date="{Binding DataInicio}" />
-          <Label Text="{Binding DataFim, StringFormat='Término: {0:dd/MM/yyyy}'}" FontAttributes="Bold" />
+                  SelectedItem="{Binding PlanoSelecionado}" SelectedIndexChanged="PlanoPicker_SelectedIndexChanged" />
+          <DatePicker Date="{Binding DataInicio}" DateSelected="InicioDatePicker_DateSelected" />
+          <Label Text="Término" />
+          <DatePicker Date="{Binding DataFim, Mode=OneWay}" IsEnabled="False" />
+          <Label Text="Objetivo" FontAttributes="Bold" />
+          <Editor Text="{Binding Objetivo}" Placeholder="Objetivo do aluno" AutoSize="TextChanges" />
         </VerticalStackLayout>
       </Border>
 
-      <Border Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1" Padding="14" StrokeShape="RoundRectangle 12">
+      <Border Style="{StaticResource CardBorder}">
         <VerticalStackLayout Spacing="10">
-          <Label Text="Objetivo" FontAttributes="Bold" FontSize="18" />
-          <Editor Text="{Binding Objetivo}" Placeholder="Objetivo do aluno" AutoSize="TextChanges" />
           <Label Text="Restrições e observações" FontAttributes="Bold" FontSize="18" />
-          <VerticalStackLayout BindableLayout.ItemsSource="{Binding RestricoesDisponiveis}">
-            <BindableLayout.ItemTemplate>
+          <CollectionView ItemsSource="{Binding RestricoesMulti}" HeightRequest="440" SelectionMode="None">
+            <CollectionView.ItemTemplate>
               <DataTemplate>
                 <HorizontalStackLayout Spacing="8">
                   <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" />
                   <Label Text="{Binding Nome}" VerticalOptions="Center" />
                 </HorizontalStackLayout>
               </DataTemplate>
-            </BindableLayout.ItemTemplate>
-          </VerticalStackLayout>
+            </CollectionView.ItemTemplate>
+          </CollectionView>
+          <Label Text="Restrições selecionadas: laudo obrigatório." IsVisible="{Binding HasRestricoes}" TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}" />
           <Editor Text="{Binding ObservacoesRestricao}" Placeholder="Observações (opcional)" AutoSize="TextChanges" />
         </VerticalStackLayout>
       </Border>
 
-      <Border Stroke="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" StrokeThickness="1" Padding="14" StrokeShape="RoundRectangle 12">
+      <Border Style="{StaticResource CardBorder}">
         <VerticalStackLayout Spacing="10">
-          <Label Text="Laudo médico (opcional)" FontAttributes="Bold" FontSize="18" />
+          <Label Text="Laudo médico" FontAttributes="Bold" FontSize="18" />
           <Label Text="{Binding LaudoStatus}" LineBreakMode="MiddleTruncation" />
+          <Label Text="Laudo anexado" IsVisible="{Binding HasLaudo}" />
+          <Label Text="Laudo obrigatório" IsVisible="{Binding LaudoPendente}" TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}" />
+          <Label Text="Laudo opcional" IsVisible="{Binding LaudoOpcional}" />
           <HorizontalStackLayout Spacing="8">
-            <Button Text="Anexar laudo" Command="{Binding AttachLaudoCommand}" />
+            <Button Text="Anexar laudo" Command="{Binding SelecionarFotoCommand}" />
             <Button Text="Remover" Command="{Binding RemoveLaudoCommand}" />
           </HorizontalStackLayout>
         </VerticalStackLayout>
@@ -74,7 +81,7 @@
       <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
       <HorizontalStackLayout HorizontalOptions="End" Spacing="10">
         <Button Text="Cancelar" Command="{Binding CancelCommand}" />
-        <Button Text="Guardar" Command="{Binding SaveCommand}" />
+        <Button Text="Guardar" Command="{Binding SaveMatriculaCommand}" />
       </HorizontalStackLayout>
     </VerticalStackLayout>
   </ScrollView>

@@ -1,11 +1,43 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:AcademiaDoZe.Presentation.AppMaui.Converters"
              x:Class="AcademiaDoZe.Presentation.AppMaui.Views.MatriculaListPage"
              x:Name="PageRoot"
              Title="Matrículas">
   <ContentPage.Resources>
-    <ResourceDictionary Source="../Resources/Styles/Styles.xaml" />
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Resources/Styles/Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <converters:RestricoesFlagsDisplayConverter x:Key="RestricoesFlagsDisplayConverter" />
+      <converters:FotoToImageSourceConverter x:Key="FotoToImageSourceConverter" />
+      <converters:EnumDisplayConverter x:Key="EnumDisplayConverter" />
+      <DataTemplate x:Key="MatriculaItemTemplate">
+        <Border Style="{StaticResource CardBorder}" Margin="0,4">
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+            <Border WidthRequest="64" HeightRequest="64" Stroke="#8B5CF6" StrokeShape="Ellipse" Padding="0" VerticalOptions="Start">
+              <Image Source="{Binding Aluno.FotoConteudo, Converter={StaticResource FotoToImageSourceConverter}}" Aspect="AspectFill" />
+            </Border>
+            <VerticalStackLayout Grid.Column="1" Spacing="3">
+              <Label Text="{Binding Id, StringFormat='Matrícula #{0}'}" FontAttributes="Bold" />
+              <Label Text="{Binding Aluno.Nome}" FontAttributes="Bold" />
+              <Label Text="{Binding Aluno.Cpf, StringFormat='CPF: {0}'}" />
+              <Label Text="{Binding Plano, Converter={StaticResource EnumDisplayConverter}, StringFormat='Plano: {0}'}" />
+              <Label Text="{Binding DataInicio, StringFormat='Início: {0:dd/MM/yyyy}'}" />
+              <Label Text="{Binding DataFim, StringFormat='Término: {0:dd/MM/yyyy}'}" />
+              <Label Text="{Binding Objetivo, StringFormat='Objetivo: {0}'}" />
+              <Label Text="{Binding Restricoes, Converter={StaticResource RestricoesFlagsDisplayConverter}, StringFormat='Restrições: {0}'}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+              <Button Text="Editar" Command="{Binding BindingContext.EditMatriculaCommand, Source={x:Reference PageRoot}}" CommandParameter="{Binding .}" />
+              <Button Text="Excluir" Command="{Binding BindingContext.DeleteMatriculaCommand, Source={x:Reference PageRoot}}" CommandParameter="{Binding .}" />
+              <Button Text="Mais" Clicked="OnMenuClicked" />
+            </VerticalStackLayout>
+          </Grid>
+        </Border>
+      </DataTemplate>
+    </ResourceDictionary>
   </ContentPage.Resources>
 
   <Grid Padding="16" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="8">
@@ -13,11 +45,12 @@
            Text="{Binding LoadErrorMessage}"
            TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}"
            LineBreakMode="WordWrap" />
-    <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
-      <SearchBar Placeholder="Buscar por aluno, CPF ou matrícula"
+    <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+      <Picker Title="Filtro" ItemsSource="{Binding FilterTypes}" SelectedItem="{Binding SelectedFilter}" />
+      <SearchBar Grid.Column="1" Placeholder="Nome, CPF, ID ou número de dias"
                  Text="{Binding SearchText}"
-                 SearchCommand="{Binding SearchCommand}" />
-      <Button Grid.Column="1" Text="Pesquisar" Command="{Binding SearchCommand}">
+                 SearchCommand="{Binding SearchMatriculasCommand}" />
+      <Button Grid.Column="2" Text="Pesquisar" Command="{Binding SearchMatriculasCommand}">
         <Button.ImageSource>
           <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" Size="26" Color="#8B5CF6" />
         </Button.ImageSource>
@@ -26,56 +59,25 @@
     <Button Grid.Row="2"
             Text="Nova matrícula"
             HorizontalOptions="End"
-            Command="{Binding AddCommand}">
+            Command="{Binding AddMatriculaCommand}">
       <Button.ImageSource>
         <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe145;" Size="26" Color="#8B5CF6" />
       </Button.ImageSource>
     </Button>
     <RefreshView Grid.Row="3"
                  IsRefreshing="{Binding IsRefreshing}"
-                 Command="{Binding LoadMatriculasCommand}">
+                 Command="{Binding RefreshCommand}">
       <CollectionView ItemsSource="{Binding Matriculas}"
+                      ItemTemplate="{StaticResource MatriculaItemTemplate}"
                       SelectionMode="None">
+        <CollectionView.ItemsLayout>
+          <GridItemsLayout Orientation="Vertical" Span="{OnIdiom Phone=1, Tablet=2, Desktop=3, TV=4}" />
+        </CollectionView.ItemsLayout>
         <CollectionView.EmptyView>
           <Label Text="Nenhuma matrícula encontrada."
                  HorizontalOptions="Center"
                  VerticalOptions="Center" />
         </CollectionView.EmptyView>
-        <CollectionView.ItemTemplate>
-          <DataTemplate>
-            <Border Style="{StaticResource CardBorder}" Margin="0,4">
-              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                <VerticalStackLayout Spacing="3">
-                  <Label Text="{Binding Id, StringFormat='Matrícula #{0}'}"
-                         FontAttributes="Bold" />
-                  <Label Text="{Binding Aluno.Nome}" FontAttributes="Bold" />
-                  <Label Text="{Binding Aluno.Cpf, StringFormat='CPF: {0}'}" />
-                  <Label Text="{Binding Aluno.DataNascimento, StringFormat='Nascimento: {0:dd/MM/yyyy}'}" />
-                  <Label Text="{Binding Plano, StringFormat='Plano: {0}'}" />
-                  <Label Text="{Binding DataInicio, StringFormat='Início: {0:dd/MM/yyyy}'}" />
-                  <Label Text="{Binding DataFim, StringFormat='Término: {0:dd/MM/yyyy}'}" />
-                  <Label Text="{Binding Restricoes, StringFormat='Restrições: {0}'}" />
-                </VerticalStackLayout>
-                <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
-                  <Button Text="Editar"
-                          Command="{Binding BindingContext.EditCommand, Source={x:Reference PageRoot}}"
-                          CommandParameter="{Binding .}">
-                    <Button.ImageSource>
-                      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe3c9;" Size="26" Color="#8B5CF6" />
-                    </Button.ImageSource>
-                  </Button>
-                  <Button Text="Excluir"
-                          Command="{Binding BindingContext.DeleteCommand, Source={x:Reference PageRoot}}"
-                          CommandParameter="{Binding .}">
-                    <Button.ImageSource>
-                      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe872;" Size="26" Color="#8B5CF6" />
-                    </Button.ImageSource>
-                  </Button>
-                </VerticalStackLayout>
-              </Grid>
-            </Border>
-          </DataTemplate>
-        </CollectionView.ItemTemplate>
       </CollectionView>
     </RefreshView>
   </Grid>
