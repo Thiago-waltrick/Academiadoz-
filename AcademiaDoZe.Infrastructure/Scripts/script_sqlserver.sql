@@ -234,6 +234,13 @@ END
 GO
 
 -- 6) Execução de treinos
+IF OBJECT_ID('dbo.tb_acesso_aluno', 'U') IS NULL
+    CREATE TABLE dbo.tb_acesso_aluno (Id INT IDENTITY(1,1) PRIMARY KEY, aluno_id INT NOT NULL, entrada DATETIME2 NOT NULL, saida DATETIME2 NULL);
+GO
+IF OBJECT_ID('dbo.tb_acesso_colaborador', 'U') IS NULL
+    CREATE TABLE dbo.tb_acesso_colaborador (Id INT IDENTITY(1,1) PRIMARY KEY, colaborador_id INT NOT NULL, entrada DATETIME2 NOT NULL, saida DATETIME2 NULL);
+GO
+
 IF OBJECT_ID('dbo.tb_treino_sessao', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.tb_treino_sessao (

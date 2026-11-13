@@ -15,6 +15,13 @@
     <ShellContent x:Name="DashboardShellContent" Title="Dashboard" Route="dashboard" />
   </FlyoutItem>
 
+  <FlyoutItem Title="Controle de Acesso" SemanticProperties.Description="Registrar entrada e saída">
+    <FlyoutItem.Icon>
+      <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe897;" Size="32" Color="#A78BFA" />
+    </FlyoutItem.Icon>
+    <ShellContent x:Name="ControleAcessoShellContent" Title="Controle de Acesso" Route="controleacesso" />
+  </FlyoutItem>
+
   <FlyoutItem Title="👥 Colaboradores" SemanticProperties.Description="Consultar e gerenciar colaboradores">
     <FlyoutItem.Icon>
       <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe7ef;" Size="32" Color="#A78BFA" />

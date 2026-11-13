@@ -17,11 +17,12 @@ namespace AcademiaDoZe.Infrastructure.Repositories
         public void Add(AcessoAluno entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-            var sql = "INSERT INTO dbo.tb_acesso_aluno (aluno_id, entrada, saida) VALUES (@aluno_id, @entrada, @saida);";
+            var sql = "INSERT INTO dbo.tb_acesso_aluno (aluno_id, entrada, saida) SELECT @aluno_id, @entrada, @saida WHERE NOT EXISTS (SELECT 1 FROM dbo.tb_acesso_aluno WITH (UPDLOCK, HOLDLOCK) WHERE aluno_id = @aluno_id AND saida IS NULL);";
             var p1 = _provider.CreateParameter("@aluno_id", entity.AlunoId);
             var p2 = _provider.CreateParameter("@entrada", entity.Entrada);
             var p3 = _provider.CreateParameter("@saida", entity.Saida ?? (object)DBNull.Value);
-            ExecuteNonQuery(sql, p1, p2, p3);
+            if (ExecuteNonQuery(sql, p1, p2, p3) == 0)
+                throw new InvalidOperationException("O aluno já possui uma entrada em aberto.");
         }
 
         public IReadOnlyCollection<AcessoAluno> GetAll()
@@ -29,6 +30,13 @@ namespace AcademiaDoZe.Infrastructure.Repositories
             var sql = "SELECT Id, aluno_id, entrada, saida FROM dbo.tb_acesso_aluno";
             var list = Query(sql, Map);
             return list.AsReadOnly();
+        }
+
+        public IReadOnlyCollection<(int Id, int AlunoId, DateTime DataAcesso)> GetHistoricoLegado(DateTime inicio, DateTime fim)
+        {
+            const string sql = "IF OBJECT_ID(N'dbo.tb_acesso', N'U') IS NOT NULL SELECT Id, aluno_id, data_acesso FROM dbo.tb_acesso WHERE aluno_id IS NOT NULL AND data_acesso >= @inicio AND data_acesso < @fim ELSE SELECT CAST(NULL AS INT), CAST(NULL AS INT), CAST(NULL AS DATETIME2) WHERE 1 = 0";
+            return Query(sql, r => (r.GetInt32(0), r.GetInt32(1), r.GetDateTime(2)),
+                _provider.CreateParameter("@inicio", inicio), _provider.CreateParameter("@fim", fim)).AsReadOnly();
         }
 
         public AcessoAluno GetById(int id)
@@ -68,12 +76,13 @@ namespace AcademiaDoZe.Infrastructure.Repositories
         public void Update(AcessoAluno entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-            var sql = "UPDATE dbo.tb_acesso_aluno SET aluno_id = @aluno_id, entrada = @entrada, saida = @saida WHERE Id = @id";
+            var sql = "UPDATE dbo.tb_acesso_aluno SET aluno_id = @aluno_id, entrada = @entrada, saida = @saida WHERE Id = @id AND saida IS NULL";
             var p1 = _provider.CreateParameter("@aluno_id", entity.AlunoId);
             var p2 = _provider.CreateParameter("@entrada", entity.Entrada);
             var p3 = _provider.CreateParameter("@saida", entity.Saida ?? (object)DBNull.Value);
             var p4 = _provider.CreateParameter("@id", entity.Id);
-            ExecuteNonQuery(sql, p1, p2, p3, p4);
+            if (ExecuteNonQuery(sql, p1, p2, p3, p4) == 0)
+                throw new InvalidOperationException("A saída já foi registrada ou o acesso não existe.");
         }
 
         private AcessoAluno Map(DbDataReader r)

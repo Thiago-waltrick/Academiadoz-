@@ -82,6 +82,7 @@ public partial class ConnectionViewModel : ObservableObject
             var provider = new DbProvider("Microsoft.Data.SqlClient", connectionString);
             await provider.ExecuteScalarAsync("SELECT 1");
             await DbInitializer.EnsureMatriculaSchemaAsync(provider);
+            await DbInitializer.EnsureAcessoSchemaAsync(provider);
 
             _repositoryConfig.DatabaseType = AcademiaDoZe.Application.Enums.AppDatabaseType.SqlServer;
             _repositoryConfig.ConnectionString = connectionString;

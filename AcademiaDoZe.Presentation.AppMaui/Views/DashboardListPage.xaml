@@ -13,13 +13,16 @@
     <VerticalStackLayout Padding="16">
 
       <!-- Header -->
-      <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
-        <Image Source="academiadoze.png" WidthRequest="64" HeightRequest="64" />
-        <VerticalStackLayout>
-          <Label Text="AcademiaDoZe" FontAttributes="Bold" FontSize="20" />
-          <Label Text="Painel de controle" FontSize="14" />
-        </VerticalStackLayout>
-      </HorizontalStackLayout>
+      <Border Style="{StaticResource CardBorder}">
+        <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
+          <Image Source="academiadoze.png" WidthRequest="110" HeightRequest="110" Aspect="AspectFit" />
+          <VerticalStackLayout VerticalOptions="Center">
+            <Label Text="AcademiaDoZe" FontAttributes="Bold" FontSize="20" />
+            <Label Text="Painel de controle" FontSize="14" />
+            <Label Text="Thiago Augusto Ruskowski Waltrick" FontSize="12" />
+          </VerticalStackLayout>
+        </HorizontalStackLayout>
+      </Border>
 
       <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HeightRequest="40" />
       <Label Text="{Binding LoadErrorMessage}" LineBreakMode="WordWrap" />

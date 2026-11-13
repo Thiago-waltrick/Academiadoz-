@@ -54,6 +54,9 @@
     <MauiXaml Update="Views\ConnectionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Views\ControleAcessoPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\MatriculaListPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>

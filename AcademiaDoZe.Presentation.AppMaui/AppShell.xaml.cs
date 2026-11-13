@@ -18,6 +18,7 @@ namespace AcademiaDoZe.Presentation.AppMaui
             MatriculasShellContent.Content = services.GetRequiredService<MatriculaListPage>();
             ColaboradoresShellContent.Content = services.GetRequiredService<ColaboradorListPage>();
             AlunosShellContent.Content = services.GetRequiredService<AlunoListPage>();
+            ControleAcessoShellContent.Content = services.GetRequiredService<ControleAcessoPage>();
             ProfileShellContent.Content = services.GetRequiredService<ProfilePage>();
             ConfigShellContent.Content = services.GetRequiredService<ConfigPage>();
         }

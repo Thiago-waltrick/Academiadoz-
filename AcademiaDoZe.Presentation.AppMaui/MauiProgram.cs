@@ -36,6 +36,7 @@ namespace AcademiaDoZe.Presentation.AppMaui
             builder.Services.AddTransient<ColaboradorViewModel>();
             builder.Services.AddTransient<AlunoListViewModel>();
             builder.Services.AddTransient<AlunoViewModel>();
+            builder.Services.AddTransient<ControleAcessoViewModel>();
 
             // Register Views
             builder.Services.AddTransient<ConnectionPage>();
@@ -52,6 +53,7 @@ namespace AcademiaDoZe.Presentation.AppMaui
             builder.Services.AddTransient<ColaboradorPage>();
             builder.Services.AddTransient<AlunoListPage>();
             builder.Services.AddTransient<AlunoPage>();
+            builder.Services.AddTransient<ControleAcessoPage>();
 
             Routing.RegisterRoute("logradouro", typeof(LogradouroPage));
             Routing.RegisterRoute("matricula", typeof(MatriculaPage));

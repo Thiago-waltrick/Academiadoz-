@@ -25,9 +25,11 @@ namespace AcademiaDoZe.Application.Services
         public Task<AcessoAlunoDto> RegistrarEntradaAsync(int alunoId, CancellationToken cancellationToken = default)
         {
             // verificar matrícula ativa
-            var possui = false;
-            try { possui = _matRepo.PossuiMatriculaAtiva(alunoId); } catch { }
+            var possui = _matRepo.PossuiMatriculaAtiva(alunoId);
             if (!possui) throw new InvalidOperationException("Aluno não possui matrícula ativa");
+
+            if (_repo.GetByAlunoId(alunoId).Any(a => a.Saida == null))
+                throw new InvalidOperationException("O aluno já possui uma entrada em aberto.");
 
             var res = Domain.Entities.AcessoAluno.Criar(0, alunoId);
             if (res.IsFailure) throw new InvalidOperationException("Falha ao criar acesso: " + string.Join(',', res.Notifications));

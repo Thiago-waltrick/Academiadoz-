@@ -109,7 +109,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
 
         public Matricula ObterMatriculaAtivaPorAluno(int alunoId)
         {
-            var sql = SelectMatricula + "WHERE m.aluno_id = @aluno_id AND m.data_fim >= CONVERT(DATE, GETDATE()) ORDER BY m.data_inicio DESC";
+            var sql = SelectMatricula + "WHERE m.aluno_id = @aluno_id AND m.data_inicio < DATEADD(day, 1, CONVERT(DATE, GETDATE())) AND m.data_fim >= CONVERT(DATE, GETDATE()) ORDER BY m.data_fim DESC";
             var p = _provider.CreateParameter("@aluno_id", alunoId);
             var list = Query(sql, Map, p);
             if (list == null || list.Count == 0) return null!;
@@ -118,7 +118,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
 
         public bool PossuiMatriculaAtiva(int alunoId)
         {
-            var sql = "SELECT COUNT(1) FROM dbo.tb_matricula WHERE aluno_id = @aluno_id AND data_fim >= CONVERT(DATE, GETDATE())";
+            var sql = "SELECT COUNT(1) FROM dbo.tb_matricula WHERE aluno_id = @aluno_id AND data_inicio < DATEADD(day, 1, CONVERT(DATE, GETDATE())) AND data_fim >= CONVERT(DATE, GETDATE())";
             var p = _provider.CreateParameter("@aluno_id", alunoId);
             var count = ExecuteScalar<int>(sql, p);
             return count > 0;
@@ -126,7 +126,7 @@ namespace AcademiaDoZe.Infrastructure.Repositories
 
         public IReadOnlyCollection<Matricula> ObterAtivas()
         {
-            var sql = SelectMatricula + "WHERE m.data_fim >= CONVERT(DATE, GETDATE())";
+            var sql = SelectMatricula + "WHERE m.data_inicio < DATEADD(day, 1, CONVERT(DATE, GETDATE())) AND m.data_fim >= CONVERT(DATE, GETDATE())";
             var list = Query(sql, Map);
             return list.AsReadOnly();
         }

@@ -8,5 +8,6 @@ namespace AcademiaDoZe.Domain.Repositories
     {
         IReadOnlyCollection<AcessoAluno> GetByAlunoId(int alunoId);
         IReadOnlyCollection<AcessoAluno> GetByAlunoIdAndDate(int alunoId, System.DateTime date);
+        IReadOnlyCollection<(int Id, int AlunoId, System.DateTime DataAcesso)> GetHistoricoLegado(System.DateTime inicio, System.DateTime fim);
     }
 }

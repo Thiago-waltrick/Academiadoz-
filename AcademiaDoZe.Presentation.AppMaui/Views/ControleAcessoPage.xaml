@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:AcademiaDoZe.Presentation.AppMaui.Converters"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.ControleAcessoPage"
+             Title="Controle de Acesso">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Resources/Styles/Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <converters:FotoToImageSourceConverter x:Key="FotoToImageSourceConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+  <ScrollView>
+    <VerticalStackLayout Padding="16" Spacing="14">
+      <Label Text="Controle de Acesso / Catraca" FontSize="24" FontAttributes="Bold" />
+      <Label Text="Tipo de identificação" />
+      <Picker Title="Selecione o tipo" ItemsSource="{Binding Modos}" SelectedItem="{Binding ModoSelecionado}" IsEnabled="{Binding PodeSelecionar}" />
+      <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
+      <Label Text="{Binding ErrorMessage}" TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}" />
+      <Border Style="{StaticResource CardBorder}">
+        <VerticalStackLayout Spacing="10">
+          <Label Text="Seleção de pessoa" FontAttributes="Bold" FontSize="18" />
+          <Picker Title="Toque para escolher o aluno" ItemsSource="{Binding Alunos}" ItemDisplayBinding="{Binding Nome}" SelectedItem="{Binding SelectedAluno}" IsVisible="{Binding IsAluno}" IsEnabled="{Binding PodeSelecionar}" />
+          <Picker Title="Toque para escolher o colaborador" ItemsSource="{Binding Colaboradores}" ItemDisplayBinding="{Binding Nome}" SelectedItem="{Binding SelectedColaborador}" IsVisible="{Binding IsColaborador}" IsEnabled="{Binding PodeSelecionar}" />
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" IsVisible="{Binding TemPessoaSelecionada}">
+            <Border WidthRequest="72" HeightRequest="72" Stroke="#8B5CF6" StrokeShape="Ellipse" Padding="0">
+              <Image Aspect="AspectFill" Source="{Binding PessoaSelecionada.FotoConteudo, Converter={StaticResource FotoToImageSourceConverter}}" />
+            </Border>
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+              <Label Text="{Binding PessoaSelecionada.Nome}" FontAttributes="Bold" FontSize="16" />
+              <Label Text="{Binding PessoaSelecionada.Cpf, StringFormat='CPF: {0}'}" />
+            </VerticalStackLayout>
+          </Grid>
+        </VerticalStackLayout>
+      </Border>
+      <Border Style="{StaticResource CardBorder}">
+        <VerticalStackLayout Spacing="10">
+          <Label Text="Identificação e Liberação" FontAttributes="Bold" FontSize="18" />
+          <Border BackgroundColor="{AppThemeBinding Light=#EDE9FE, Dark=#3B2A5D}" StrokeThickness="0" Padding="10" StrokeShape="RoundRectangle 10">
+            <Label Text="{Binding Status}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#5B21B6, Dark=#DDD6FE}" HorizontalOptions="Center" />
+          </Border>
+          <ActivityIndicator IsVisible="{Binding VerificandoSelecao}" IsRunning="{Binding VerificandoSelecao}" />
+          <Button Text="{Binding Acao}" Command="{Binding RegistrarAcessoCommand}" IsEnabled="{Binding PodeRegistrar}">
+            <Button.ImageSource><FontImageSource FontFamily="MaterialIcons" Glyph="&#xe897;" Size="22" Color="White" /></Button.ImageSource>
+          </Button>
+        </VerticalStackLayout>
+      </Border>
+      <Label Text="Acessos Registrados Hoje" FontAttributes="Bold" FontSize="20" />
+      <CollectionView ItemsSource="{Binding AcessosHoje}" SelectionMode="None" HeightRequest="400">
+        <CollectionView.EmptyView><Label Text="Nenhum acesso registrado hoje." HorizontalOptions="Center" /></CollectionView.EmptyView>
+        <CollectionView.ItemTemplate>
+          <DataTemplate>
+            <Border Style="{StaticResource CardBorder}" Margin="0,4">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                <Border WidthRequest="56" HeightRequest="56" Stroke="#8B5CF6" StrokeShape="Ellipse" Padding="0">
+                  <Image Aspect="AspectFill" Source="{Binding FotoConteudo, Converter={StaticResource FotoToImageSourceConverter}}" />
+                </Border>
+                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                  <Label Text="{Binding Nome}" FontAttributes="Bold" />
+                  <Label Text="{Binding Tipo}" TextColor="{AppThemeBinding Light=#6D28D9, Dark=#C4B5FD}" />
+                  <Label Text="{Binding Entrada}" />
+                  <Label Text="{Binding Saida}" />
+                </VerticalStackLayout>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+      </CollectionView>
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>

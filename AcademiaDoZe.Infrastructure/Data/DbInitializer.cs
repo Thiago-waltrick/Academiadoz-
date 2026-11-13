@@ -75,6 +75,17 @@ END;";
             return provider.ExecuteNonQueryAsync(sql);
         }
 
+        public static Task EnsureAcessoSchemaAsync(DbProvider provider)
+        {
+            if (provider == null) throw new ArgumentNullException(nameof(provider));
+            const string sql = @"
+IF OBJECT_ID(N'dbo.tb_acesso_aluno', N'U') IS NULL
+    CREATE TABLE dbo.tb_acesso_aluno (Id INT IDENTITY(1,1) PRIMARY KEY, aluno_id INT NOT NULL, entrada DATETIME2 NOT NULL, saida DATETIME2 NULL);
+IF OBJECT_ID(N'dbo.tb_acesso_colaborador', N'U') IS NULL
+    CREATE TABLE dbo.tb_acesso_colaborador (Id INT IDENTITY(1,1) PRIMARY KEY, colaborador_id INT NOT NULL, entrada DATETIME2 NOT NULL, saida DATETIME2 NULL);";
+            return provider.ExecuteNonQueryAsync(sql);
+        }
+
         /// <summary>
         /// Executa uma lista de arquivos SQL na ordem informada.
         /// </summary>

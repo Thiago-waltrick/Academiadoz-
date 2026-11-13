@@ -17,11 +17,12 @@ namespace AcademiaDoZe.Infrastructure.Repositories
         public void Add(AcessoColaborador entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-            var sql = "INSERT INTO dbo.tb_acesso_colaborador (colaborador_id, entrada, saida) VALUES (@colaborador_id, @entrada, @saida);";
+            var sql = "INSERT INTO dbo.tb_acesso_colaborador (colaborador_id, entrada, saida) SELECT @colaborador_id, @entrada, @saida WHERE NOT EXISTS (SELECT 1 FROM dbo.tb_acesso_colaborador WITH (UPDLOCK, HOLDLOCK) WHERE colaborador_id = @colaborador_id AND saida IS NULL);";
             var p1 = _provider.CreateParameter("@colaborador_id", entity.ColaboradorId);
             var p2 = _provider.CreateParameter("@entrada", entity.Entrada);
             var p3 = _provider.CreateParameter("@saida", entity.Saida ?? (object)DBNull.Value);
-            ExecuteNonQuery(sql, p1, p2, p3);
+            if (ExecuteNonQuery(sql, p1, p2, p3) == 0)
+                throw new InvalidOperationException("O colaborador já possui uma entrada em aberto.");
         }
 
         public IReadOnlyCollection<AcessoColaborador> GetAll()
@@ -68,12 +69,13 @@ namespace AcademiaDoZe.Infrastructure.Repositories
         public void Update(AcessoColaborador entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-            var sql = "UPDATE dbo.tb_acesso_colaborador SET colaborador_id = @colaborador_id, entrada = @entrada, saida = @saida WHERE Id = @id";
+            var sql = "UPDATE dbo.tb_acesso_colaborador SET colaborador_id = @colaborador_id, entrada = @entrada, saida = @saida WHERE Id = @id AND saida IS NULL";
             var p1 = _provider.CreateParameter("@colaborador_id", entity.ColaboradorId);
             var p2 = _provider.CreateParameter("@entrada", entity.Entrada);
             var p3 = _provider.CreateParameter("@saida", entity.Saida ?? (object)DBNull.Value);
             var p4 = _provider.CreateParameter("@id", entity.Id);
-            ExecuteNonQuery(sql, p1, p2, p3, p4);
+            if (ExecuteNonQuery(sql, p1, p2, p3, p4) == 0)
+                throw new InvalidOperationException("A saída já foi registrada ou o acesso não existe.");
         }
 
         private AcessoColaborador Map(DbDataReader r)
